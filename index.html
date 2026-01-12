@@ -8,15 +8,15 @@
   <!-- Google Font -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
 
-  <!-- PDF.js -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <!-- Stable PDF.js v2.14 (BEST for browser extraction) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.14.305/pdf.min.js"></script>
+  <script>
+    pdfjsLib.GlobalWorkerOptions.workerSrc =
+      "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.14.305/pdf.worker.min.js";
+  </script>
 
   <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
       font-family: 'Inter', sans-serif;
@@ -39,11 +39,7 @@
       box-shadow: 0 0 60px rgba(30, 58, 138, 0.2);
     }
 
-    h1 {
-      text-align: center;
-      font-size: 30px;
-      margin-bottom: 6px;
-    }
+    h1 { text-align: center; font-size: 30px; margin-bottom: 6px; }
 
     .subtitle {
       text-align: center;
@@ -59,6 +55,7 @@
       text-align: center;
       cursor: pointer;
       margin-bottom: 20px;
+      position: relative;
     }
 
     #fileInput {
@@ -67,11 +64,11 @@
       width: 100%;
       height: 100%;
       cursor: pointer;
+      top: 0;
+      left: 0;
     }
 
-    .results {
-      margin-top: 25px;
-    }
+    .results { margin-top: 25px; }
 
     .file-item {
       background: rgba(255, 255, 255, 0.05);
@@ -119,28 +116,24 @@
 </div>
 
 <script>
-  // PDF.js Worker
-  pdfjsLib.GlobalWorkerOptions.workerSrc =
-    "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
-
   document.getElementById("fileInput").addEventListener("change", handleFiles);
 
   async function handleFiles(event) {
     const files = Array.from(event.target.files);
-    const resultsDiv = document.getElementById("results");
-    resultsDiv.innerHTML = "";
+    const results = document.getElementById("results");
+    results.innerHTML = "";
 
     for (const file of files) {
-      const div = document.createElement("div");
-      div.className = "file-item";
-      div.innerHTML = `<strong>${file.name}</strong><br><small>Processing...</small>`;
-      resultsDiv.appendChild(div);
+      const box = document.createElement("div");
+      box.className = "file-item";
+      box.innerHTML = `<strong>${file.name}</strong><br><small>Processing...</small>`;
+      results.appendChild(box);
 
       try {
         const text = await extractPdfText(file);
         const jsonData = transformToJson(text, file.name);
 
-        div.innerHTML = `
+        box.innerHTML = `
           <strong>${file.name}</strong>
           <div class="json-box">${JSON.stringify(jsonData, null, 2)}</div>
           <button class="btn" onclick='downloadJson(${JSON.stringify(jsonData)}, "${file.name}")'>
@@ -148,34 +141,33 @@
           </button>
         `;
       } catch (e) {
-        div.innerHTML = `<strong>${file.name}</strong><br><small style="color:red">Error reading PDF</small>`;
+        box.innerHTML = `<strong>${file.name}</strong><br><small style="color:red">Error reading PDF</small>`;
       }
     }
   }
 
   async function extractPdfText(file) {
-    const buffer = await file.arrayBuffer();
-    const pdf = await pdfjsLib.getDocument({ data: buffer }).promise;
+    const data = await file.arrayBuffer();
+    const pdf = await pdfjsLib.getDocument({ data }).promise;
 
-    let text = "";
+    let fullText = "";
     for (let i = 1; i <= pdf.numPages; i++) {
       const page = await pdf.getPage(i);
       const content = await page.getTextContent();
-      text += content.items.map(item => item.str).join(" ") + "\n\n";
+      fullText += content.items.map(i => i.str).join(" ") + "\n\n";
     }
-    return text;
+    return fullText;
   }
 
-  // -------------------------
-  // MAIN JSON TRANSFORM LOGIC
-  // -------------------------
+  // ----------------------------------------------------------
+  // MAIN LOGIC: PDF → JSON (based on your eInvoice structure)
+  // ----------------------------------------------------------
   function transformToJson(text, fileName) {
 
     const find = (regex) => {
       const m = text.match(regex);
       return m ? m[1].trim() : "";
     };
-
     const clean = (v) => v.replace(/,/g, "");
 
     return {
@@ -188,12 +180,12 @@
         const raw = find(/Date\s*([\d]{2}-[A-Za-z]{3}-[\d]{2})/i);
         if (!raw) return "";
         const months = {Jan:"01",Feb:"02",Mar:"03",Apr:"04",May:"05",Jun:"06",Jul:"07",Aug:"08",Sep:"09",Oct:"10",Nov:"11",Dec:"12"};
-        return raw.replace(/([0-9]{2})-([A-Za-z]{3})-([0-9]{2})/,
+        return raw.replace(/(\d{2})-([A-Za-z]{3})-(\d{2})/,
           (m,d,mn,y) => `${d}/${months[mn]}/20${y}`);
       })(),
 
       Buyer_GSTIN: find(/\b(\d{2}[A-Z]{5}\d{4}[A-Z]\dZ[A-Z])\b/),
-      Buyer_Legal_Name: find(/Hind\s+Terminals\s+Pvt\.?\s*Ltd\.?/i) || "Hind Terminals Pvt Ltd",
+      Buyer_Legal_Name: "Hind Terminals Pvt Ltd",
       Buyer_Trade_Name: "",
       Buyer_POS: "Gujarat",
       Buyer_Addr1: "Survey No. 76 / 77, Adani Port Road, Dhrab",
@@ -213,54 +205,4 @@
       Unit: "NUMBERS",
 
       Unit_Price: "",
-      Gross_Amount: clean(find(/Gross Amount.*?([\d,\.]+)/i) || "0"),
-      Discount: clean(find(/Discount.*?([\d,\.]+)/i) || "0"),
-      Pre_Tax_Value: "",
-      Taxable_Value: clean(find(/Taxable Value.*?([\d,\.]+)/i) || "0"),
-      GST_Rate: find(/(\d{1,2})\s*%/),
-
-      Sgst_Amt: clean(find(/SGST.*?([\d,\.]+)/i) || "0"),
-      Cgst_Amt: clean(find(/CGST.*?([\d,\.]+)/i) || "0"),
-      Igst_Amt: clean(find(/IGST.*?([\d,\.]+)/i) || "0"),
-
-      Cess_Rate: "",
-      Cess_Amt_Adval: "",
-      Cess_Amt_Non_Adval: "",
-      State_Cess_Rate: "",
-      State_Cess_Adval_Amt: "",
-      State_Cess_Non_Adval_Amt: "",
-      Other_Charges: "",
-
-      Item_Total: clean(find(/Item Total.*?([\d,\.]+)/i) || "0"),
-
-      Total_Taxable_Value: clean(find(/Total Taxable Value.*?([\d,\.]+)/i) || "0"),
-      Total_Sgst_Amt: clean(find(/SGST.*?([\d,\.]+)/i) || "0"),
-      Total_Cgst_Amt: clean(find(/CGST.*?([\d,\.]+)/i) || "0"),
-      Total_Igst_Amt: clean(find(/IGST.*?([\d,\.]+)/i) || "0"),
-      Total_Cess_Amt: "",
-      Total_State_Cess_Amt: "",
-      Total_Discount: "",
-      Total_Other_Charges: "",
-      Round_Off: "",
-      Total_Invoice_Value: clean(find(/Invoice Total.*?([\d,\.]+)/i) || "0")
-    };
-  }
-
-  function downloadJson(data, fileName) {
-    const blob = new Blob([JSON.stringify(data, null, 2)], {
-      type: "application/json",
-    });
-    const url = URL.createObjectURL(blob);
-
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = fileName.replace(".pdf", "") + ".json";
-    a.click();
-
-    URL.revokeObjectURL(url);
-  }
-
-</script>
-
-</body>
-</html>
+      Gross_Am_
