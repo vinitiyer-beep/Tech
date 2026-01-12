@@ -8,11 +8,10 @@
   <!-- Google Font -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
 
-  <!-- Stable PDF.js v2.14 (BEST for browser extraction) -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.14.305/pdf.min.js"></script>
+  <!-- PDF.js (Worker-less version to avoid GitHub Pages issues) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.12.313/pdf.min.js"></script>
   <script>
-    pdfjsLib.GlobalWorkerOptions.workerSrc =
-      "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.14.305/pdf.worker.min.js";
+    pdfjsLib.GlobalWorkerOptions.workerSrc = null; 
   </script>
 
   <style>
@@ -131,7 +130,7 @@
 
       try {
         const text = await extractPdfText(file);
-        const jsonData = transformToJson(text, file.name);
+        const jsonData = transformToJson(text);
 
         box.innerHTML = `
           <strong>${file.name}</strong>
@@ -147,22 +146,33 @@
   }
 
   async function extractPdfText(file) {
-    const data = await file.arrayBuffer();
-    const pdf = await pdfjsLib.getDocument({ data }).promise;
+    const buffer = await file.arrayBuffer();
 
-    let fullText = "";
+    const loadingTask = pdfjsLib.getDocument({
+      data: buffer,
+      useWorkerFetch: false,
+      isEvalSupported: false,
+      disableFontFace: false
+    });
+
+    const pdf = await loadingTask.promise;
+
+    let text = "";
     for (let i = 1; i <= pdf.numPages; i++) {
       const page = await pdf.getPage(i);
-      const content = await page.getTextContent();
-      fullText += content.items.map(i => i.str).join(" ") + "\n\n";
+      const content = await page.getTextContent({
+        disableCombineTextItems: false 
+      });
+      text += content.items.map(i => i.str).join(" ") + "\n\n";
     }
-    return fullText;
+
+    return text;
   }
 
   // ----------------------------------------------------------
-  // MAIN LOGIC: PDF → JSON (based on your eInvoice structure)
+  // MAIN LOGIC: PDF → JSON (Surge Marine eInvoice fields)
   // ----------------------------------------------------------
-  function transformToJson(text, fileName) {
+  function transformToJson(text) {
 
     const find = (regex) => {
       const m = text.match(regex);
@@ -181,28 +191,3 @@
         if (!raw) return "";
         const months = {Jan:"01",Feb:"02",Mar:"03",Apr:"04",May:"05",Jun:"06",Jul:"07",Aug:"08",Sep:"09",Oct:"10",Nov:"11",Dec:"12"};
         return raw.replace(/(\d{2})-([A-Za-z]{3})-(\d{2})/,
-          (m,d,mn,y) => `${d}/${months[mn]}/20${y}`);
-      })(),
-
-      Buyer_GSTIN: find(/\b(\d{2}[A-Z]{5}\d{4}[A-Z]\dZ[A-Z])\b/),
-      Buyer_Legal_Name: "Hind Terminals Pvt Ltd",
-      Buyer_Trade_Name: "",
-      Buyer_POS: "Gujarat",
-      Buyer_Addr1: "Survey No. 76 / 77, Adani Port Road, Dhrab",
-      Buyer_Addr2: "",
-      Buyer_Location: "Kachchh",
-      Buyer_Pin_Code: "370001",
-      Buyer_State: "Gujarat",
-      Buyer_Phone_Number: "",
-      Buyer_Email_Id: "",
-
-      Sl_No: "1",
-      Product_Description: "Repairs",
-      Is_Service: "Yes",
-      HSN_Code: find(/\b998711\b/),
-
-      Quantity: "0",
-      Unit: "NUMBERS",
-
-      Unit_Price: "",
-      Gross_Am_
