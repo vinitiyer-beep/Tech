@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Promptology – PDF to JSON</title>
+  <title>Promptology – PDF to eInvoice JSON</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <!-- Google Font -->
@@ -30,7 +30,7 @@
 
     .card {
       width: 100%;
-      max-width: 800px;
+      max-width: 900px;
       background: rgba(15, 23, 42, 0.75);
       padding: 40px;
       border-radius: 18px;
@@ -41,7 +41,7 @@
 
     h1 {
       text-align: center;
-      font-size: 28px;
+      font-size: 30px;
       margin-bottom: 6px;
     }
 
@@ -49,7 +49,7 @@
       text-align: center;
       color: #9ca3af;
       margin-bottom: 25px;
-      font-size: 15px;
+      font-size: 14px;
     }
 
     .upload-box {
@@ -84,10 +84,10 @@
       background: rgba(0, 0, 0, 0.3);
       padding: 12px;
       border-radius: 8px;
-      max-height: 220px;
+      max-height: 250px;
       overflow: auto;
       margin-top: 10px;
-      font-size: 13px;
+      font-size: 12px;
       white-space: pre-wrap;
     }
 
@@ -107,12 +107,11 @@
 
 <div class="card">
   <h1>Promptology</h1>
-  <p class="subtitle">Multi-PDF → JSON extractor (runs fully in your browser)</p>
+  <p class="subtitle">Multi-PDF → eInvoice JSON — 100% Browser-Based</p>
 
   <label class="upload-box">
-    <strong>Click here to upload PDFs</strong>
-    <br>
-    <small>or drag & drop multiple files</small>
+    <strong>Click to upload PDFs</strong><br>
+    <small>or drag & drop</small>
     <input id="fileInput" type="file" accept="application/pdf" multiple>
   </label>
 
@@ -120,6 +119,7 @@
 </div>
 
 <script>
+  // PDF.js Worker
   pdfjsLib.GlobalWorkerOptions.workerSrc =
     "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
 
@@ -131,16 +131,16 @@
     resultsDiv.innerHTML = "";
 
     for (const file of files) {
-      const fileDiv = document.createElement("div");
-      fileDiv.className = "file-item";
-      fileDiv.innerHTML = `<strong>${file.name}</strong><br><small>Processing...</small>`;
-      resultsDiv.appendChild(fileDiv);
+      const div = document.createElement("div");
+      div.className = "file-item";
+      div.innerHTML = `<strong>${file.name}</strong><br><small>Processing...</small>`;
+      resultsDiv.appendChild(div);
 
       try {
         const text = await extractPdfText(file);
         const jsonData = transformToJson(text, file.name);
 
-        fileDiv.innerHTML = `
+        div.innerHTML = `
           <strong>${file.name}</strong>
           <div class="json-box">${JSON.stringify(jsonData, null, 2)}</div>
           <button class="btn" onclick='downloadJson(${JSON.stringify(jsonData)}, "${file.name}")'>
@@ -148,35 +148,101 @@
           </button>
         `;
       } catch (e) {
-        fileDiv.innerHTML = `<strong>${file.name}</strong><br><small style="color:red">Failed to read PDF</small>`;
+        div.innerHTML = `<strong>${file.name}</strong><br><small style="color:red">Error reading PDF</small>`;
       }
     }
   }
 
   async function extractPdfText(file) {
-    const arrayBuffer = await file.arrayBuffer();
-    const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
-    let fullText = "";
+    const buffer = await file.arrayBuffer();
+    const pdf = await pdfjsLib.getDocument({ data: buffer }).promise;
 
+    let text = "";
     for (let i = 1; i <= pdf.numPages; i++) {
       const page = await pdf.getPage(i);
       const content = await page.getTextContent();
-      const strings = content.items.map(item => item.str).join(" ");
-      fullText += strings + "\n\n";
+      text += content.items.map(item => item.str).join(" ") + "\n\n";
     }
-    return fullText;
+    return text;
   }
 
+  // -------------------------
+  // MAIN JSON TRANSFORM LOGIC
+  // -------------------------
   function transformToJson(text, fileName) {
+
+    const find = (regex) => {
+      const m = text.match(regex);
+      return m ? m[1].trim() : "";
+    };
+
+    const clean = (v) => v.replace(/,/g, "");
+
     return {
-      file_name: fileName,
-      extracted_at: new Date().toISOString(),
-      raw_text: text,
-      fields: {
-        // You can customize these mappings later:
-        // invoice_no: findValue(text, /Invoice No[:\s]+(\S+)/i),
-        // gstin: findValue(text, /\b\d{2}[A-Z]{5}\d{4}[A-Z]\dZ[A-Z]\b/),
-      }
+      Supply_Type_Code: "B2B",
+      Igst_On_Intra: "",
+      Document_Type: "Tax Invoice",
+
+      Document_Number: find(/(HTP\d+)/i),
+      Document_Date: (function(){
+        const raw = find(/Date\s*([\d]{2}-[A-Za-z]{3}-[\d]{2})/i);
+        if (!raw) return "";
+        const months = {Jan:"01",Feb:"02",Mar:"03",Apr:"04",May:"05",Jun:"06",Jul:"07",Aug:"08",Sep:"09",Oct:"10",Nov:"11",Dec:"12"};
+        return raw.replace(/([0-9]{2})-([A-Za-z]{3})-([0-9]{2})/,
+          (m,d,mn,y) => `${d}/${months[mn]}/20${y}`);
+      })(),
+
+      Buyer_GSTIN: find(/\b(\d{2}[A-Z]{5}\d{4}[A-Z]\dZ[A-Z])\b/),
+      Buyer_Legal_Name: find(/Hind\s+Terminals\s+Pvt\.?\s*Ltd\.?/i) || "Hind Terminals Pvt Ltd",
+      Buyer_Trade_Name: "",
+      Buyer_POS: "Gujarat",
+      Buyer_Addr1: "Survey No. 76 / 77, Adani Port Road, Dhrab",
+      Buyer_Addr2: "",
+      Buyer_Location: "Kachchh",
+      Buyer_Pin_Code: "370001",
+      Buyer_State: "Gujarat",
+      Buyer_Phone_Number: "",
+      Buyer_Email_Id: "",
+
+      Sl_No: "1",
+      Product_Description: "Repairs",
+      Is_Service: "Yes",
+      HSN_Code: find(/\b998711\b/),
+
+      Quantity: "0",
+      Unit: "NUMBERS",
+
+      Unit_Price: "",
+      Gross_Amount: clean(find(/Gross Amount.*?([\d,\.]+)/i) || "0"),
+      Discount: clean(find(/Discount.*?([\d,\.]+)/i) || "0"),
+      Pre_Tax_Value: "",
+      Taxable_Value: clean(find(/Taxable Value.*?([\d,\.]+)/i) || "0"),
+      GST_Rate: find(/(\d{1,2})\s*%/),
+
+      Sgst_Amt: clean(find(/SGST.*?([\d,\.]+)/i) || "0"),
+      Cgst_Amt: clean(find(/CGST.*?([\d,\.]+)/i) || "0"),
+      Igst_Amt: clean(find(/IGST.*?([\d,\.]+)/i) || "0"),
+
+      Cess_Rate: "",
+      Cess_Amt_Adval: "",
+      Cess_Amt_Non_Adval: "",
+      State_Cess_Rate: "",
+      State_Cess_Adval_Amt: "",
+      State_Cess_Non_Adval_Amt: "",
+      Other_Charges: "",
+
+      Item_Total: clean(find(/Item Total.*?([\d,\.]+)/i) || "0"),
+
+      Total_Taxable_Value: clean(find(/Total Taxable Value.*?([\d,\.]+)/i) || "0"),
+      Total_Sgst_Amt: clean(find(/SGST.*?([\d,\.]+)/i) || "0"),
+      Total_Cgst_Amt: clean(find(/CGST.*?([\d,\.]+)/i) || "0"),
+      Total_Igst_Amt: clean(find(/IGST.*?([\d,\.]+)/i) || "0"),
+      Total_Cess_Amt: "",
+      Total_State_Cess_Amt: "",
+      Total_Discount: "",
+      Total_Other_Charges: "",
+      Round_Off: "",
+      Total_Invoice_Value: clean(find(/Invoice Total.*?([\d,\.]+)/i) || "0")
     };
   }
 
@@ -193,6 +259,7 @@
 
     URL.revokeObjectURL(url);
   }
+
 </script>
 
 </body>
