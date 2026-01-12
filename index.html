@@ -1,14 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Promptology | Coming Soon</title>
-
-  <meta name="description" content="Promptology is a next-generation AI platform launching soon." />
+  <meta charset="UTF-8">
+  <title>Promptology – PDF to JSON</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <!-- Google Font -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+  <!-- PDF.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 
   <style>
     * {
@@ -19,116 +20,180 @@
 
     body {
       font-family: 'Inter', sans-serif;
-      background: radial-gradient(circle at top, #0f172a, #020617);
+      background: radial-gradient(circle at top, #0f172a, #020617 52%, #000);
       color: #e5e7eb;
-      height: 100vh;
+      min-height: 100vh;
+      padding: 40px 20px;
       display: flex;
-      align-items: center;
       justify-content: center;
     }
 
     .card {
-      max-width: 720px;
-      width: 90%;
-      padding: 60px;
+      width: 100%;
+      max-width: 800px;
       background: rgba(15, 23, 42, 0.75);
-      border-radius: 16px;
+      padding: 40px;
+      border-radius: 18px;
       backdrop-filter: blur(12px);
-      border: 1px solid rgba(255,255,255,0.08);
-      box-shadow: 0 0 80px rgba(99, 102, 241, 0.15);
-      text-align: center;
-    }
-
-    .badge {
-      display: inline-block;
-      padding: 6px 16px;
-      border-radius: 999px;
-      font-size: 0.8rem;
-      background: rgba(99, 102, 241, 0.15);
-      color: #a5b4fc;
-      margin-bottom: 24px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 0 60px rgba(30, 58, 138, 0.2);
     }
 
     h1 {
-      font-size: 3.2rem;
-      font-weight: 700;
-      letter-spacing: -0.03em;
-      margin-bottom: 16px;
+      text-align: center;
+      font-size: 28px;
+      margin-bottom: 6px;
     }
 
-    h1 span {
-      color: #6366f1;
+    .subtitle {
+      text-align: center;
+      color: #9ca3af;
+      margin-bottom: 25px;
+      font-size: 15px;
     }
 
-    p {
-      font-size: 1.15rem;
-      line-height: 1.6;
-      color: #cbd5f5;
-      margin-bottom: 36px;
-    }
-
-    .email-box {
-      display: flex;
-      gap: 12px;
-      justify-content: center;
-      flex-wrap: wrap;
-    }
-
-    input {
-      padding: 14px 18px;
-      border-radius: 10px;
-      border: none;
-      width: 260px;
-      font-size: 1rem;
-      outline: none;
-    }
-
-    button {
-      padding: 14px 28px;
-      border-radius: 10px;
-      border: none;
-      background: linear-gradient(135deg, #6366f1, #818cf8);
-      color: white;
-      font-size: 1rem;
-      font-weight: 600;
+    .upload-box {
+      border: 2px dashed rgba(255, 255, 255, 0.3);
+      border-radius: 14px;
+      padding: 30px;
+      text-align: center;
       cursor: pointer;
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
-      box-shadow: 0 10px 30px rgba(99,102,241,0.35);
+      margin-bottom: 20px;
     }
 
-    button:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 14px 40px rgba(99,102,241,0.45);
+    #fileInput {
+      opacity: 0;
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      cursor: pointer;
     }
 
-    footer {
-      margin-top: 40px;
-      font-size: 0.85rem;
-      color: #94a3b8;
+    .results {
+      margin-top: 25px;
+    }
+
+    .file-item {
+      background: rgba(255, 255, 255, 0.05);
+      padding: 15px 20px;
+      border-radius: 10px;
+      margin-bottom: 12px;
+    }
+
+    .json-box {
+      background: rgba(0, 0, 0, 0.3);
+      padding: 12px;
+      border-radius: 8px;
+      max-height: 220px;
+      overflow: auto;
+      margin-top: 10px;
+      font-size: 13px;
+      white-space: pre-wrap;
+    }
+
+    .btn {
+      margin-top: 10px;
+      padding: 8px 16px;
+      background: linear-gradient(135deg, #4f46e5, #06b6d4);
+      border: none;
+      border-radius: 999px;
+      color: white;
+      cursor: pointer;
+      font-size: 13px;
     }
   </style>
 </head>
-
 <body>
-  <div class="card">
-    <div class="badge">🚀 Launching Soon</div>
 
-    <h1>Prompt<span>ology</span></h1>
+<div class="card">
+  <h1>Promptology</h1>
+  <p class="subtitle">Multi-PDF → JSON extractor (runs fully in your browser)</p>
 
-    <p>
-      A next-generation AI platform helping teams and creators
-      design, test, and scale better prompts.
-    </p>
+  <label class="upload-box">
+    <strong>Click here to upload PDFs</strong>
+    <br>
+    <small>or drag & drop multiple files</small>
+    <input id="fileInput" type="file" accept="application/pdf" multiple>
+  </label>
 
-    <div class="email-box">
-      <input type="email" placeholder="Enter your email" />
-      <button>Notify Me</button>
-    </div>
+  <div id="results" class="results"></div>
+</div>
 
-    <footer>
-      © 2026 Promptology. Built for the future of AI.
-    </footer>
-  </div>
+<script>
+  pdfjsLib.GlobalWorkerOptions.workerSrc =
+    "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+
+  document.getElementById("fileInput").addEventListener("change", handleFiles);
+
+  async function handleFiles(event) {
+    const files = Array.from(event.target.files);
+    const resultsDiv = document.getElementById("results");
+    resultsDiv.innerHTML = "";
+
+    for (const file of files) {
+      const fileDiv = document.createElement("div");
+      fileDiv.className = "file-item";
+      fileDiv.innerHTML = `<strong>${file.name}</strong><br><small>Processing...</small>`;
+      resultsDiv.appendChild(fileDiv);
+
+      try {
+        const text = await extractPdfText(file);
+        const jsonData = transformToJson(text, file.name);
+
+        fileDiv.innerHTML = `
+          <strong>${file.name}</strong>
+          <div class="json-box">${JSON.stringify(jsonData, null, 2)}</div>
+          <button class="btn" onclick='downloadJson(${JSON.stringify(jsonData)}, "${file.name}")'>
+            Download JSON
+          </button>
+        `;
+      } catch (e) {
+        fileDiv.innerHTML = `<strong>${file.name}</strong><br><small style="color:red">Failed to read PDF</small>`;
+      }
+    }
+  }
+
+  async function extractPdfText(file) {
+    const arrayBuffer = await file.arrayBuffer();
+    const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+    let fullText = "";
+
+    for (let i = 1; i <= pdf.numPages; i++) {
+      const page = await pdf.getPage(i);
+      const content = await page.getTextContent();
+      const strings = content.items.map(item => item.str).join(" ");
+      fullText += strings + "\n\n";
+    }
+    return fullText;
+  }
+
+  function transformToJson(text, fileName) {
+    return {
+      file_name: fileName,
+      extracted_at: new Date().toISOString(),
+      raw_text: text,
+      fields: {
+        // You can customize these mappings later:
+        // invoice_no: findValue(text, /Invoice No[:\s]+(\S+)/i),
+        // gstin: findValue(text, /\b\d{2}[A-Z]{5}\d{4}[A-Z]\dZ[A-Z]\b/),
+      }
+    };
+  }
+
+  function downloadJson(data, fileName) {
+    const blob = new Blob([JSON.stringify(data, null, 2)], {
+      type: "application/json",
+    });
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = fileName.replace(".pdf", "") + ".json";
+    a.click();
+
+    URL.revokeObjectURL(url);
+  }
+</script>
+
 </body>
 </html>
-
