@@ -5,15 +5,14 @@
   <title>Promptology – PDF to eInvoice JSON</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <!-- Google Font -->
+  <!-- Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
 
-  <!-- PDF.js LIGHT VERSION (text extraction only, workerless, unblockable) -->
+  <!-- pdf.js (ES5 build, workerless usage) -->
   <script src="https://unpkg.com/pdfjs-dist@2.6.347/es5/build/pdf.js"></script>
-  <script>
-    // Disable workers entirely (safest)
-    pdfjsLib.GlobalWorkerOptions.workerSrc = "";
-  </script>
+
+  <!-- Tesseract.js (OCR fallback) -->
+  <script src="https://unpkg.com/tesseract.js@5.0.1/dist/tesseract.min.js"></script>
 
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -77,6 +76,15 @@
       margin-bottom: 12px;
     }
 
+    .status {
+      font-size: 12px;
+      color: #9ca3af;
+    }
+
+    .status span {
+      font-weight: 600;
+    }
+
     .json-box {
       background: rgba(0, 0, 0, 0.3);
       padding: 12px;
@@ -98,13 +106,18 @@
       cursor: pointer;
       font-size: 13px;
     }
+
+    .error {
+      color: #f97373;
+      font-size: 12px;
+    }
   </style>
 </head>
 
 <body>
 <div class="card">
   <h1>Promptology</h1>
-  <p class="subtitle">Multi-PDF → eInvoice JSON — 100% Browser-Based</p>
+  <p class="subtitle">Multi-PDF → eInvoice JSON — pdf.js + OCR (Hybrid)</p>
 
   <label class="upload-box">
     <strong>Click to upload PDFs</strong><br>
@@ -116,55 +129,126 @@
 </div>
 
 <script>
-  document.getElementById("fileInput").addEventListener("change", handleFiles);
+  // Use pdf.js without workers (simpler + fewer blocks)
+  if (window.pdfjsLib && pdfjsLib.GlobalWorkerOptions) {
+    pdfjsLib.GlobalWorkerOptions.workerSrc = "";
+  }
 
-  async function handleFiles(event) {
-    const files = Array.from(event.target.files);
-    const results = document.getElementById("results");
-    results.innerHTML = "";
+  const fileInput = document.getElementById("fileInput");
+  const resultsDiv = document.getElementById("results");
+
+  fileInput.addEventListener("change", handleFiles);
+
+  async function handleFiles(e) {
+    const files = Array.from(e.target.files || []);
+    resultsDiv.innerHTML = "";
 
     for (const file of files) {
       const box = document.createElement("div");
       box.className = "file-item";
-      box.innerHTML = `<strong>${file.name}</strong><br><small>Processing...</small>`;
-      results.appendChild(box);
+      box.innerHTML = `<strong>${file.name}</strong><div class="status">Status: <span>Processing (pdf.js)…</span></div>`;
+      resultsDiv.appendChild(box);
 
       try {
-        const text = await extractPdfText(file);
+        const text = await extractHybridText(file, (phase) => {
+          const statusSpan = box.querySelector(".status span");
+          if (statusSpan) statusSpan.textContent = phase;
+        });
+
         const jsonData = transformToJson(text);
 
         box.innerHTML = `
           <strong>${file.name}</strong>
+          <div class="status">Status: <span>Done</span></div>
           <div class="json-box">${JSON.stringify(jsonData, null, 2)}</div>
           <button class="btn" onclick='downloadJson(${JSON.stringify(jsonData)}, "${file.name}")'>
             Download JSON
           </button>
         `;
-      } catch (e) {
-        box.innerHTML = `<strong>${file.name}</strong><br><small style="color:red">Error reading PDF</small>`;
+      } catch (err) {
+        console.error(err);
+        box.innerHTML = `
+          <strong>${file.name}</strong>
+          <div class="error">Error reading PDF (even with OCR)</div>
+        `;
       }
     }
   }
 
-  // -------------------------
-  // PDF → TEXT (pdf.js-light)
-  // -------------------------
-  async function extractPdfText(file) {
-    const buffer = await file.arrayBuffer();
-    const pdf = await pdfjsLib.getDocument({ data: buffer }).promise;
+  // ---------- HYBRID EXTRACTION: pdf.js → OCR fallback ----------
+  async function extractHybridText(file, setPhase) {
+    let text = "";
+    let pdfBuf = await file.arrayBuffer();
+
+    // 1) Try pdf.js text extraction
+    try {
+      if (setPhase) setPhase("pdf.js text extraction…");
+      text = await extractPdfText(pdfBuf);
+    } catch (e) {
+      console.warn("pdf.js text extraction failed, will try OCR:", e);
+    }
+
+    // If pdf.js returned almost nothing, go OCR
+    if (!text || text.replace(/\s+/g, "").length < 30) {
+      if (setPhase) setPhase("OCR (Balanced) in progress…");
+      text = await extractOcrText(pdfBuf);
+    }
+
+    if (!text || text.replace(/\s+/g, "").length < 10) {
+      throw new Error("No text even after OCR");
+    }
+
+    return text;
+  }
+
+  // 1a) pdf.js text extraction
+  async function extractPdfText(arrayBuffer) {
+    const loadingTask = pdfjsLib.getDocument({ data: arrayBuffer });
+    const pdf = await loadingTask.promise;
 
     let text = "";
     for (let i = 1; i <= pdf.numPages; i++) {
       const page = await pdf.getPage(i);
       const content = await page.getTextContent();
-      text += content.items.map(t => t.str).join(" ") + "\n\n";
+      text += content.items.map(it => it.str).join(" ") + "\n\n";
     }
-    return text;
+    return text.trim();
   }
 
-  // -------------------------
-  // TEXT → JSON (Your mapping)
-  // -------------------------
+  // 1b) OCR fallback using Tesseract.js (Balanced)
+  async function extractOcrText(arrayBuffer) {
+    const loadingTask = pdfjsLib.getDocument({ data: arrayBuffer });
+    const pdf = await loadingTask.promise;
+
+    let fullText = "";
+
+    for (let i = 1; i <= pdf.numPages; i++) {
+      const page = await pdf.getPage(i);
+      const viewport = page.getViewport({ scale: 1.7 }); // balanced quality/speed
+
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d");
+      canvas.width = viewport.width;
+      canvas.height = viewport.height;
+
+      await page.render({ canvasContext: ctx, viewport }).promise;
+
+      const result = await Tesseract.recognize(
+        canvas,
+        "eng",
+        {
+          // Balanced mode: no crazy configs, just defaults
+          logger: m => console.log(`OCR p${i}:`, m.status || m)
+        }
+      );
+
+      fullText += result.data.text + "\n\n";
+    }
+
+    return fullText.trim();
+  }
+
+  // ---------- TEXT → YOUR EINVOICE JSON ----------
   function transformToJson(text) {
     const find = (regex) => {
       const m = text.match(regex);
@@ -181,8 +265,14 @@
       Document_Date: (() => {
         const raw = find(/Date\s*([\d]{2}-[A-Za-z]{3}-[\d]{2})/i);
         if (!raw) return "";
-        const months = {Jan:"01",Feb:"02",Mar:"03",Apr:"04",May:"05",Jun:"06",Jul:"07",Aug:"08",Sep:"09",Oct:"10",Nov:"11",Dec:"12"};
-        return raw.replace(/(\d{2})-([A-Za-z]{3})-(\d{2})/, (m,d,mn,y)=>`${d}/${months[mn]}/20${y}`);
+        const months = {
+          Jan:"01",Feb:"02",Mar:"03",Apr:"04",May:"05",Jun:"06",
+          Jul:"07",Aug:"08",Sep:"09",Oct:"10",Nov:"11",Dec:"12"
+        };
+        return raw.replace(
+          /(\d{2})-([A-Za-z]{3})-(\d{2})/,
+          (m,d,mn,y)=>`${d}/${months[mn]}/20${y}`
+        );
       })(),
 
       Buyer_GSTIN: find(/\b(\d{2}[A-Z]{5}\d{4}[A-Z]\dZ[A-Z])\b/),
@@ -223,15 +313,14 @@
     };
   }
 
+  // ---------- Download JSON ----------
   function downloadJson(data, fileName) {
     const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
     const url = URL.createObjectURL(blob);
-
     const a = document.createElement("a");
     a.href = url;
-    a.download = fileName.replace(".pdf", "") + ".json";
+    a.download = fileName.replace(/\.pdf$/i, "") + ".json";
     a.click();
-
     URL.revokeObjectURL(url);
   }
 </script>
