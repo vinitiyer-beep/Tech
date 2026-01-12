@@ -8,10 +8,11 @@
   <!-- Google Font -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
 
-  <!-- PDF.js (Worker-less version to avoid GitHub Pages issues) -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.12.313/pdf.min.js"></script>
+  <!-- PDF.js LIGHT VERSION (text extraction only, workerless, unblockable) -->
+  <script src="https://unpkg.com/pdfjs-dist@2.6.347/es5/build/pdf.js"></script>
   <script>
-    pdfjsLib.GlobalWorkerOptions.workerSrc = null; 
+    // Disable workers entirely (safest)
+    pdfjsLib.GlobalWorkerOptions.workerSrc = "";
   </script>
 
   <style>
@@ -99,8 +100,8 @@
     }
   </style>
 </head>
-<body>
 
+<body>
 <div class="card">
   <h1>Promptology</h1>
   <p class="subtitle">Multi-PDF → eInvoice JSON — 100% Browser-Based</p>
@@ -145,35 +146,26 @@
     }
   }
 
+  // -------------------------
+  // PDF → TEXT (pdf.js-light)
+  // -------------------------
   async function extractPdfText(file) {
     const buffer = await file.arrayBuffer();
-
-    const loadingTask = pdfjsLib.getDocument({
-      data: buffer,
-      useWorkerFetch: false,
-      isEvalSupported: false,
-      disableFontFace: false
-    });
-
-    const pdf = await loadingTask.promise;
+    const pdf = await pdfjsLib.getDocument({ data: buffer }).promise;
 
     let text = "";
     for (let i = 1; i <= pdf.numPages; i++) {
       const page = await pdf.getPage(i);
-      const content = await page.getTextContent({
-        disableCombineTextItems: false 
-      });
-      text += content.items.map(i => i.str).join(" ") + "\n\n";
+      const content = await page.getTextContent();
+      text += content.items.map(t => t.str).join(" ") + "\n\n";
     }
-
     return text;
   }
 
-  // ----------------------------------------------------------
-  // MAIN LOGIC: PDF → JSON (Surge Marine eInvoice fields)
-  // ----------------------------------------------------------
+  // -------------------------
+  // TEXT → JSON (Your mapping)
+  // -------------------------
   function transformToJson(text) {
-
     const find = (regex) => {
       const m = text.match(regex);
       return m ? m[1].trim() : "";
@@ -186,8 +178,63 @@
       Document_Type: "Tax Invoice",
 
       Document_Number: find(/(HTP\d+)/i),
-      Document_Date: (function(){
+      Document_Date: (() => {
         const raw = find(/Date\s*([\d]{2}-[A-Za-z]{3}-[\d]{2})/i);
         if (!raw) return "";
         const months = {Jan:"01",Feb:"02",Mar:"03",Apr:"04",May:"05",Jun:"06",Jul:"07",Aug:"08",Sep:"09",Oct:"10",Nov:"11",Dec:"12"};
-        return raw.replace(/(\d{2})-([A-Za-z]{3})-(\d{2})/,
+        return raw.replace(/(\d{2})-([A-Za-z]{3})-(\d{2})/, (m,d,mn,y)=>`${d}/${months[mn]}/20${y}`);
+      })(),
+
+      Buyer_GSTIN: find(/\b(\d{2}[A-Z]{5}\d{4}[A-Z]\dZ[A-Z])\b/),
+      Buyer_Legal_Name: "Hind Terminals Pvt Ltd",
+      Buyer_Trade_Name: "",
+      Buyer_POS: "Gujarat",
+      Buyer_Addr1: "Survey No. 76 / 77, Adani Port Road, Dhrab",
+      Buyer_Addr2: "",
+      Buyer_Location: "Kachchh",
+      Buyer_Pin_Code: "370001",
+      Buyer_State: "Gujarat",
+      Buyer_Phone_Number: "",
+      Buyer_Email_Id: "",
+
+      Sl_No: "1",
+      Product_Description: "Repairs",
+      Is_Service: "Yes",
+      HSN_Code: find(/\b998711\b/),
+
+      Quantity: "0",
+      Unit: "NUMBERS",
+
+      Gross_Amount: clean(find(/Gross Amount.*?([\d,\.]+)/i) || "0"),
+      Discount: clean(find(/Discount.*?([\d,\.]+)/i) || "0"),
+      Taxable_Value: clean(find(/Taxable Value.*?([\d,\.]+)/i) || "0"),
+      GST_Rate: find(/(\d{1,2})\s*%/),
+
+      Sgst_Amt: clean(find(/SGST.*?([\d,\.]+)/i) || "0"),
+      Cgst_Amt: clean(find(/CGST.*?([\d,\.]+)/i) || "0"),
+      Igst_Amt: clean(find(/IGST.*?([\d,\.]+)/i) || "0"),
+
+      Item_Total: clean(find(/Item Total.*?([\d,\.]+)/i) || "0"),
+      Total_Taxable_Value: clean(find(/Total Taxable Value.*?([\d,\.]+)/i) || "0"),
+      Total_Sgst_Amt: clean(find(/SGST.*?([\d,\.]+)/i) || "0"),
+      Total_Cgst_Amt: clean(find(/CGST.*?([\d,\.]+)/i) || "0"),
+      Total_Igst_Amt: clean(find(/IGST.*?([\d,\.]+)/i) || "0"),
+      Total_Invoice_Value: clean(find(/Invoice Total.*?([\d,\.]+)/i) || "0")
+    };
+  }
+
+  function downloadJson(data, fileName) {
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = fileName.replace(".pdf", "") + ".json";
+    a.click();
+
+    URL.revokeObjectURL(url);
+  }
+</script>
+
+</body>
+</html>
