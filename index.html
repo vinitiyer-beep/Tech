@@ -2,25 +2,22 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Promptology – PDF to eInvoice JSON</title>
+  <title>Promptology – PDF to Form-A Row</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <!-- Google Font -->
+  <!-- Styles -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
 
   <!-- LOCAL pdf.js -->
   <script src="libs/pdf.js"></script>
   <script>
-    // Point worker to local path
     pdfjsLib.GlobalWorkerOptions.workerSrc = "libs/pdf.worker.js";
   </script>
 
-  <!-- LOCAL Tesseract.js OCR -->
+  <!-- LOCAL OCR -->
   <script src="libs/tesseract.js"></script>
 
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-
     body {
       font-family: 'Inter', sans-serif;
       background: radial-gradient(circle at top, #0f172a, #020617 52%, #000);
@@ -30,240 +27,206 @@
       display: flex;
       justify-content: center;
     }
-
     .card {
-      width: 100%;
       max-width: 900px;
+      width: 100%;
       background: rgba(15, 23, 42, 0.75);
       padding: 40px;
-      border-radius: 18px;
+      border-radius: 16px;
       backdrop-filter: blur(12px);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      box-shadow: 0 0 60px rgba(30, 58, 138, 0.2);
     }
-
-    h1 { text-align: center; font-size: 30px; margin-bottom: 6px; }
-
-    .subtitle {
-      text-align: center;
-      color: #9ca3af;
-      margin-bottom: 25px;
-      font-size: 14px;
-    }
-
     .upload-box {
-      border: 2px dashed rgba(255, 255, 255, 0.3);
-      border-radius: 14px;
+      border: 2px dashed rgba(255,255,255,0.3);
       padding: 30px;
+      border-radius: 14px;
       text-align: center;
       cursor: pointer;
       margin-bottom: 20px;
       position: relative;
     }
-
     #fileInput {
-      opacity: 0;
       position: absolute;
-      width: 100%;
-      height: 100%;
-      cursor: pointer;
-      top: 0;
-      left: 0;
+      width: 100%; height: 100%;
+      opacity: 0; cursor: pointer; left: 0; top: 0;
     }
-
-    .results { margin-top: 25px; }
-
     .file-item {
-      background: rgba(255, 255, 255, 0.05);
-      padding: 15px 20px;
-      border-radius: 10px;
-      margin-bottom: 12px;
+      background: rgba(255,255,255,0.07);
+      padding: 20px;
+      border-radius: 12px;
+      margin-bottom: 15px;
     }
-
-    .status {
-      font-size: 12px;
-      color: #9ca3af;
-    }
-
-    .json-box {
-      background: rgba(0, 0, 0, 0.3);
-      padding: 12px;
-      border-radius: 8px;
-      max-height: 250px;
-      overflow: auto;
-      margin-top: 10px;
-      font-size: 12px;
-      white-space: pre-wrap;
-    }
-
     .btn {
       margin-top: 10px;
-      padding: 8px 16px;
-      background: linear-gradient(135deg, #4f46e5, #06b6d4);
+      padding: 10px 18px;
       border: none;
       border-radius: 999px;
+      background: linear-gradient(135deg,#4f46e5,#06b6d4);
       color: white;
       cursor: pointer;
-      font-size: 13px;
+      font-size: 14px;
     }
-
-    .error {
-      color: #f97373;
+    pre {
+      white-space: pre-wrap;
+      color: #e5e7eb;
+      background: rgba(0,0,0,0.35);
+      padding: 12px;
+      border-radius: 8px;
       font-size: 12px;
+      overflow-x: auto;
     }
   </style>
 </head>
 
 <body>
 <div class="card">
-  <h1>Promptology</h1>
-  <p class="subtitle">Multi-PDF → eInvoice JSON — pdf.js + OCR Hybrid</p>
+  <h1 style="text-align:center;">Promptology</h1>
+  <p style="text-align:center;color:#9ca3af;font-size:14px;margin-bottom:20px;">
+    Upload PDF → Auto Extract → Copy Full Form-A Row (Excel Ready)
+  </p>
 
   <label class="upload-box">
-    <strong>Click to upload PDFs</strong><br>
-    <small>or drag & drop</small>
-    <input id="fileInput" type="file" accept="application/pdf" multiple>
+    <strong>Click to upload PDF</strong><br><small>or drag + drop</small>
+    <input id="fileInput" type="file" accept="application/pdf">
   </label>
 
-  <div id="results" class="results"></div>
+  <div id="results"></div>
 </div>
 
 <script>
-  const fileInput = document.getElementById("fileInput");
-  const resultsDiv = document.getElementById("results");
+document.getElementById("fileInput").addEventListener("change", handleFile);
 
-  fileInput.addEventListener("change", handleFiles);
+// MASTER FUNCTION
+async function handleFile(e) {
+  const file = e.target.files[0];
+  const results = document.getElementById("results");
+  results.innerHTML = "";
 
-  async function handleFiles(e) {
-    const files = Array.from(e.target.files || []);
-    resultsDiv.innerHTML = "";
+  const box = document.createElement("div");
+  box.className = "file-item";
+  box.innerHTML = `<strong>${file.name}</strong><br>Status: <span>Extracting…</span>`;
+  results.appendChild(box);
 
-    for (const file of files) {
-      const box = document.createElement("div");
-      box.className = "file-item";
-      box.innerHTML = `
-        <strong>${file.name}</strong>
-        <div class="status">Status: <span>Processing (pdf.js)…</span></div>
-      `;
-      resultsDiv.appendChild(box);
+  try {
+    const text = await extractHybrid(file, (p)=>{ box.querySelector("span").textContent=p; });
+    const data = extractFields(text);
+    const formARow = buildFormARow(data);
 
-      try {
-        const text = await extractHybridText(file, (phase) => {
-          box.querySelector(".status span").textContent = phase;
-        });
+    box.innerHTML = `
+      <strong>${file.name}</strong><br>Status: Done
+      <div style="margin-top:15px;">
+        <strong>Form-A Excel Row (Preview)</strong>
+        <pre>${formARow}</pre>
+        <button class="btn" onclick='copyRow(\`${formARow}\`)'>Copy Full Form-A Row</button>
+      </div>
+    `;
+  }
+  catch(err) {
+    box.innerHTML = `<strong>${file.name}</strong><br><span style="color:#f87171">Error extracting PDF.</span>`;
+  }
+}
 
-        const jsonData = transformToJson(text);
+function copyRow(text) {
+  navigator.clipboard.writeText(text).then(() => {
+    alert("Form-A row copied!\nNow paste directly into Excel.");
+  });
+}
 
-        box.innerHTML = `
-          <strong>${file.name}</strong>
-          <div class="status">Status: <span>Done</span></div>
-          <div class="json-box">${JSON.stringify(jsonData, null, 2)}</div>
-          <button class="btn" onclick='downloadJson(${JSON.stringify(jsonData)}, "${file.name}")'>
-            Download JSON
-          </button>
-        `;
-      } catch (err) {
-        box.innerHTML = `
-          <strong>${file.name}</strong>
-          <div class="error">Error reading PDF (pdf.js + OCR both failed)</div>
-        `;
-      }
-    }
+// HYBRID: pdf.js → OCR fallback
+async function extractHybrid(file, update) {
+  const buffer = await file.arrayBuffer();
+  let text = "";
+
+  try {
+    update("Extracting (pdf.js) …");
+    text = await extractPdfText(buffer);
+  } catch {}
+
+  if (!text || text.replace(/\s+/g,"").length < 20) {
+    update("Extracting (OCR) …");
+    text = await extractOcrText(buffer);
   }
 
-  // HYBRID EXTRACTION
-  async function extractHybridText(file, setPhase) {
-    let text = "";
-    const buffer = await file.arrayBuffer();
+  return text;
+}
 
-    // Try pdf.js
-    try {
-      setPhase("pdf.js extraction…");
-      text = await extractPdfText(buffer);
-    } catch {}
-
-    // Fallback to OCR if too little text
-    if (!text || text.replace(/\s+/g, "").length < 20) {
-      setPhase("OCR (Balanced)…");
-      text = await extractOcrText(buffer);
-    }
-
-    return text;
+async function extractPdfText(buffer) {
+  const pdf = await pdfjsLib.getDocument({data:buffer}).promise;
+  let t = "";
+  for(let i=1;i<=pdf.numPages;i++){
+    const page = await pdf.getPage(i);
+    const c = await page.getTextContent();
+    t += c.items.map(x=>x.str).join(" ") + "\n";
   }
+  return t;
+}
 
-  // pdf.js extraction
-  async function extractPdfText(buffer) {
-    const pdf = await pdfjsLib.getDocument({ data: buffer }).promise;
-    let text = "";
-
-    for (let i = 1; i <= pdf.numPages; i++) {
-      const page = await pdf.getPage(i);
-      const content = await page.getTextContent();
-      text += content.items.map(i => i.str).join(" ") + "\n";
-    }
-
-    return text;
+async function extractOcrText(buffer) {
+  const pdf = await pdfjsLib.getDocument({data:buffer}).promise;
+  let t = "";
+  for(let i=1;i<=pdf.numPages;i++){
+    const page = await pdf.getPage(i);
+    const v = page.getViewport({scale:1.7});
+    const canvas = document.createElement("canvas");
+    canvas.width=v.width; canvas.height=v.height;
+    const ctx=canvas.getContext("2d");
+    await page.render({canvasContext:ctx,viewport:v}).promise;
+    const out = await Tesseract.recognize(canvas,"eng");
+    t += out.data.text + "\n";
   }
+  return t;
+}
 
-  // OCR extraction
-  async function extractOcrText(buffer) {
-    const pdf = await pdfjsLib.getDocument({ data: buffer }).promise;
-    let resultText = "";
+// FIELD EXTRACTION from text
+function extract(text, regex) {
+  const m = text.match(regex);
+  return m ? m[1].trim() : "";
+}
 
-    for (let i = 1; i <= pdf.numPages; i++) {
-      const page = await pdf.getPage(i);
-      const viewport = page.getViewport({ scale: 1.7 });
+function extractFields(text){
+  return {
+    Document_Number: extract(/(HTP\d+)/i),
+    Document_Date: (() => {
+      const r = extract(/Date\s*([\d]{2}-[A-Za-z]{3}-[\d]{2})/i);
+      if(!r) return "";
+      const m = {Jan:"01",Feb:"02",Mar:"03",Apr:"04",May:"05",Jun:"06",Jul:"07",Aug:"08",Sep:"09",Oct:"10",Nov:"11",Dec:"12"};
+      return r.replace(/(\d{2})-([A-Za-z]{3})-(\d{2})/, (x,d,mo,y)=>`${d}/${m[mo]}/20${y}`);
+    })(),
+    Buyer_GSTIN: extract(/\b(\d{2}[A-Z]{5}\d{4}[A-Z]\dZ[A-Z])\b/),
+    HSN: extract(/\b(998711)\b/),
+    GST_Rate: extract(/(\d{1,2})\s*%/),
+    Gross_Amount: extract(/Gross Amount.*?([\d,\.]+)/i),
+    Discount: extract(/Discount.*?([\d,\.]+)/i),
+    Taxable_Value: extract(/Taxable Value.*?([\d,\.]+)/i),
+    SGST: extract(/SGST.*?([\d,\.]+)/i),
+    CGST: extract(/CGST.*?([\d,\.]+)/i),
+    IGST: extract(/IGST.*?([\d,\.]+)/i),
+    Item_Total: extract(/Invoice Total.*?([\d,\.]+)/i),
+    Total_Taxable_Value: extract(/Total Taxable Value.*?([\d,\.]+)/i),
+    Total_Invoice_Value: extract(/Invoice Total.*?([\d,\.]+)/i)
+  };
+}
 
-      const canvas = document.createElement("canvas");
-      canvas.width = viewport.width;
-      canvas.height = viewport.height;
-      const ctx = canvas.getContext("2d");
+// BUILD THE FULL 49-COLUMN TSV ROW
+function buildFormARow(v){
+  const row = [
+    "B2B","", "Tax Invoice",                             // 1–3
+    v.Document_Number, v.Document_Date,                 // 4–5
+    v.Buyer_GSTIN, "Hind Terminals Pvt Ltd", "",        // 6–8
+    "Gujarat", "Survey No. 76 / 77, Adani Port Road, Dhrab", "", // 9–11
+    "Kachchh", "370001", "Gujarat", "", "",             // 12–16
+    "1", "Repairs", "Yes", v.HSN, "0", "NUMBERS", "0",  // 17–23
+    v.Gross_Amount, v.Discount, v.Taxable_Value,        // 24–26
+    v.Taxable_Value, v.GST_Rate,                        // 27–28
+    v.SGST, v.CGST, v.IGST,                             // 29–31
+    "", "", "", "", "", "", "",                         // CESS FIELDS (blank)
+    v.Item_Total,                                       // item total
+    v.Total_Taxable_Value, v.SGST, v.CGST, v.IGST,      // totals
+    "", "", "",                                         // cess total blank
+    v.Total_Invoice_Value                               // final invoice
+  ];
 
-      await page.render({ canvasContext: ctx, viewport }).promise;
-
-      const result = await Tesseract.recognize(canvas, "eng");
-      resultText += result.data.text + "\n";
-    }
-
-    return resultText;
-  }
-
-  // Mapping to JSON
-  function transformToJson(text) {
-    const find = (re) => {
-      const m = text.match(re);
-      return m ? m[1] : "";
-    };
-    const clean = (v) => v.replace(/,/g, "");
-
-    return {
-      Supply_Type_Code: "B2B",
-      Document_Type: "Tax Invoice",
-
-      Document_Number: find(/(HTP\d+)/i),
-      Document_Date: find(/Date\s*([0-9]{2}-[A-Za-z]{3}-[0-9]{2})/),
-
-      Buyer_GSTIN: find(/\b(\d{2}[A-Z]{5}\d{4}[A-Z]\dZ[A-Z])\b/),
-
-      Gross_Amount: clean(find(/Gross\s*Amount\s*([\d,\.]+)/i) || "0"),
-      Taxable_Value: clean(find(/Taxable\s*Value\s*([\d,\.]+)/i) || "0"),
-
-      GST_Rate: find(/(\d{1,2})\s*%/),
-      Sgst_Amt: clean(find(/SGST\s*([\d,\.]+)/i) || "0"),
-      Cgst_Amt: clean(find(/CGST\s*([\d,\.]+)/i) || "0"),
-      Igst_Amt: clean(find(/IGST\s*([\d,\.]+)/i) || "0"),
-
-      Total_Invoice_Value: clean(find(/Invoice\s*Total.*?([\d,\.]+)/i) || "0"),
-    };
-  }
-
-  function downloadJson(data, fileName) {
-    const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
-    const a = document.createElement("a");
-    a.href = URL.createObjectURL(blob);
-    a.download = fileName.replace(/\.pdf$/i, "") + ".json";
-    a.click();
-  }
+  return row.map(x=>x||"").join("\t");
+}
 </script>
 
 </body>
