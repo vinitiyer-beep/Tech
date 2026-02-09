@@ -3,153 +3,187 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>BiteBack — Reverse Food Delivery</title>
+  <title>SaveTheBite | Eat Smart. Waste Less.</title>
 
   <style>
-    :root {
-      --primary: #1f7a5a;
-      --secondary: #f4f9f7;
-      --accent: #ffb703;
-      --dark: #0f172a;
-    }
-
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: "Inter", system-ui, sans-serif;
-    }
-
     body {
-      background: linear-gradient(135deg, var(--secondary), #ffffff);
-      color: var(--dark);
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .container {
-      max-width: 900px;
-      padding: 40px 24px;
-      text-align: center;
-    }
-
-    .badge {
-      display: inline-block;
-      background: rgba(31, 122, 90, 0.1);
-      color: var(--primary);
-      padding: 6px 14px;
-      border-radius: 999px;
-      font-weight: 600;
-      margin-bottom: 16px;
-      font-size: 14px;
-    }
-
-    h1 {
-      font-size: clamp(2.5rem, 5vw, 3.5rem);
-      font-weight: 800;
-      margin-bottom: 12px;
-    }
-
-    h1 span {
-      color: var(--primary);
-    }
-
-    .subtitle {
-      font-size: 1.15rem;
-      color: #475569;
-      max-width: 650px;
-      margin: 0 auto 36px;
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: #f7f9fb;
+      color: #1f2933;
       line-height: 1.6;
     }
 
-    .features {
+    header {
+      background: #0f766e;
+      color: white;
+      padding: 60px 20px;
+      text-align: center;
+    }
+
+    header img {
+      width: 110px;
+      margin-bottom: 20px;
+    }
+
+    section {
+      max-width: 1000px;
+      margin: auto;
+      padding: 60px 20px;
+    }
+
+    h2 {
+      color: #0f766e;
+      margin-bottom: 10px;
+    }
+
+    .grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
       gap: 20px;
-      margin-bottom: 40px;
+      margin-top: 30px;
     }
 
     .card {
       background: white;
-      padding: 22px;
-      border-radius: 16px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.06);
-      text-align: left;
-    }
-
-    .card h3 {
-      font-size: 1.1rem;
-      margin-bottom: 8px;
-      color: var(--primary);
-    }
-
-    .card p {
-      font-size: 0.95rem;
-      color: #475569;
-      line-height: 1.5;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
     }
 
     .cta {
-      margin-top: 20px;
+      background: #ecfeff;
+      text-align: center;
+      padding: 60px 20px;
     }
 
-    .cta p {
-      margin-bottom: 12px;
-      font-weight: 500;
-    }
-
-    .email-box {
-      display: flex;
-      justify-content: center;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-
-    input[type="email"] {
-      padding: 12px 14px;
-      border-radius: 10px;
-      border: 1px solid #cbd5e1;
-      min-width: 260px;
-      font-size: 15px;
-    }
-
-    button {
-      background: var(--primary);
+    .cta button {
+      background: #0f766e;
       color: white;
       border: none;
-      padding: 12px 22px;
-      border-radius: 10px;
-      font-size: 15px;
-      font-weight: 600;
+      padding: 15px 30px;
+      font-size: 16px;
+      border-radius: 8px;
       cursor: pointer;
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
-    }
-
-    button:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 20px rgba(31, 122, 90, 0.25);
     }
 
     footer {
-      margin-top: 50px;
+      text-align: center;
+      padding: 20px;
       font-size: 14px;
-      color: #64748b;
-    }
-
-    footer span {
-      color: var(--primary);
-      font-weight: 600;
+      color: #6b7280;
     }
   </style>
 </head>
 
 <body>
-  <div class="container">
 
-    <div class="badge">🚀 Coming Soon</div>
+<!-- HERO SECTION -->
+<header>
+  <!-- LOGO GOES HERE -->
+  <img src="assets/logo.png" alt="SaveTheBite Logo">
 
-    <h1><span>BiteBack</span></h1>
-    <p class="subtitle">
-      Re
+  <h1>SaveTheBite</h1>
+  <p>Track what you own. Eat within budget. Reduce food waste. Get rewarded.</p>
+</header>
+
+<!-- PROBLEM -->
+<section>
+  <h2>The Problem</h2>
+  <p>
+    Students overspend on food while throwing away perfectly edible groceries.
+    Expiry dates are forgotten, budgets are exceeded, and sustainability goals
+    feel abstract.
+  </p>
+</section>
+
+<!-- SOLUTION -->
+<section>
+  <h2>Our Solution</h2>
+
+  <div class="grid">
+    <div class="card">
+      <h3>Smart Food Tracking</h3>
+      <p>
+        Track what food you already own using receipt scans or quick inputs.
+        Get reminders before items expire.
+      </p>
+    </div>
+
+    <div class="card">
+      <h3>Budget-Friendly Meal Planning</h3>
+      <p>
+        Generate meal plans and recipes using only existing ingredients
+        while staying within your budget.
+      </p>
+    </div>
+
+    <div class="card">
+      <h3>Gamified Sustainability</h3>
+      <p>
+        Join challenges, reduce waste, and earn credits for positive food behavior.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- USER FLOW -->
+<section>
+  <h2>How It Works</h2>
+  <ol>
+    <li>Set food preferences, budget, and sustainability goals</li>
+    <li>Track food inventory and receive expiry alerts</li>
+    <li>Generate affordable meal plans and grocery lists</li>
+    <li>Complete challenges and earn credits</li>
+    <li>Redeem credits at campus canteens, grocery stores, and cafés</li>
+  </ol>
+
+  <!-- OPTIONAL FLOW IMAGE -->
+  <!-- <img src="assets/flow.png" style="width:100%; margin-top:30px;"> -->
+</section>
+
+<!-- MONETIZATION -->
+<section>
+  <h2>Business Model</h2>
+
+  <div class="grid">
+    <div class="card">
+      <h3>University Partnerships</h3>
+      <p>
+        Universities pay for student wellbeing, sustainability impact,
+        and ESG reporting.
+      </p>
+    </div>
+
+    <div class="card">
+      <h3>Retail & Café Partners</h3>
+      <p>
+        Grocery stores and cafés gain footfall through credit-based redemptions
+        and promotions.
+      </p>
+    </div>
+
+    <div class="card">
+      <h3>Sponsored Challenges</h3>
+      <p>
+        Brands sponsor challenges aligned with affordability and sustainability.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- CALL TO ACTION -->
+<section class="cta">
+  <h2>Coming Soon</h2>
+  <p>
+    Save money. Reduce food waste. Make sustainability rewarding.
+  </p>
+  <button>Join the Waitlist</button>
+</section>
+
+<footer>
+  © 2026 SaveTheBite · Built for Students · Sustainability First
+</footer>
+
+</body>
+</html>
