@@ -1,16 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>SaveTheBite</title>
 
 <style>
 :root {
-  --green-dark: #0f766e;
-  --green-light: #22c55e;
+  --green-dark: #1b5e20;
+  --green-main: #2e7d32;
+  --green-light: #43a047;
   --text-dark: #0f172a;
-  --bg-light: #f7fdfb;
+  --bg: #f6fbf8;
 }
 
 * {
@@ -20,64 +21,66 @@
 body {
   margin: 0;
   font-family: Arial, Helvetica, sans-serif;
-  background: var(--bg-light);
+  background: var(--bg);
   color: var(--text-dark);
 }
 
-/* NAVBAR */
+/* NAV */
 .nav {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 20px 60px;
+  padding: 24px 60px;
 }
 
 .nav img {
-  height: 200px; /* BIGGER LOGO */
-}
-
-.nav button {
-  background: var(--green-dark);
-  color: white;
-  border: none;
-  padding: 12px 26px;
-  border-radius: 999px;
-  cursor: pointer;
-  font-weight: 600;
+  height: 110px;
 }
 
 /* HERO */
 .hero {
   display: grid;
-  grid-template-columns: 1fr 1.2fr;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 40px;
   align-items: center;
   padding: 60px;
-  gap: 40px;
 }
 
 .hero h1 {
-  font-size: 44px;
-  margin-bottom: 16px;
+  font-size: 48px;
+  line-height: 1.15;
+  margin-bottom: 20px;
+}
+
+.hero h1 span {
+  color: var(--green-main);
 }
 
 .hero p {
   font-size: 18px;
-  margin-bottom: 28px;
   color: #475569;
+  margin-bottom: 26px;
+  max-width: 520px;
 }
 
-.hero button {
-  background: var(--green-light);
+.hero small {
+  display: block;
+  margin-top: 14px;
+  color: #64748b;
+}
+
+/* CTA */
+.cta {
+  background: linear-gradient(135deg, var(--green-main), var(--green-light));
   border: none;
-  padding: 14px 32px;
-  border-radius: 999px;
+  color: white;
+  padding: 16px 36px;
   font-size: 16px;
+  border-radius: 999px;
   font-weight: 600;
   cursor: pointer;
-  color: #064e3b;
 }
 
-/* IMAGE RIGHT */
+/* APP IMAGE */
 .hero-image img {
   width: 100%;
   max-width: 720px;
@@ -87,29 +90,40 @@ body {
 .features {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 30px;
-  padding: 40px 60px;
+  gap: 28px;
+  padding: 40px 60px 20px;
 }
 
 .feature {
   background: white;
-  padding: 24px;
-  border-radius: 16px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+  border-radius: 18px;
+  padding: 26px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.06);
 }
 
 .feature h3 {
   margin-top: 0;
   color: var(--green-dark);
+  font-size: 18px;
+}
+
+.feature p {
+  font-size: 15px;
+  color: #475569;
 }
 
 /* TEAM */
 .team {
-  padding: 40px 60px 60px;
+  padding: 50px 60px;
 }
 
 .team h2 {
-  margin-bottom: 20px;
+  margin-bottom: 10px;
+}
+
+.team p {
+  color: #64748b;
+  margin-bottom: 30px;
 }
 
 .team-grid {
@@ -120,18 +134,20 @@ body {
 
 .member {
   background: white;
+  border-radius: 16px;
   padding: 18px;
-  border-radius: 14px;
   box-shadow: 0 6px 18px rgba(0,0,0,0.05);
 }
 
 .member strong {
   display: block;
+  margin-bottom: 4px;
 }
 
+/* FOOTER */
 footer {
   text-align: center;
-  padding: 20px;
+  padding: 24px;
   color: #64748b;
   font-size: 14px;
 }
@@ -152,14 +168,15 @@ footer {
     grid-template-columns: 1fr;
   }
 
-  .nav {
-    padding: 20px;
-  }
-
+  .nav,
   .hero,
   .features,
   .team {
     padding: 30px 20px;
+  }
+
+  .hero h1 {
+    font-size: 36px;
   }
 }
 </style>
@@ -175,39 +192,50 @@ footer {
 <!-- HERO -->
 <div class="hero">
   <div>
-    <h1>Eat smart. Waste less.</h1>
+    <h1>
+      Turn food you already have<br>
+      into <span>meals and rewards</span>.
+    </h1>
+
     <p>
-      SaveTheBite is a student-first app that helps you track food,
-      stay within budget, and get rewarded for reducing food waste.
+      Track your food. Beat waste.  
+      Earn real rewards on campus.
     </p>
-    <button>Join the Waitlist</button>
+
+    <button class="cta">Get Early Access</button>
+
+    <small>Built by students, for students.</small>
   </div>
 
-  <!-- IMAGE ON RIGHT (replace later) -->
   <div class="hero-image">
-    <img src="assets/app.png" alt="App Preview">
+    <!-- Replace this image later -->
+    <img src="assets/app.png" alt="SaveTheBite App Preview">
   </div>
 </div>
 
 <!-- FEATURES -->
 <div class="features">
   <div class="feature">
-    <h3>Track What You Own</h3>
-    <p>Know exactly what food you have and when it expires.</p>
+    <h3>Never forget what’s in your fridge</h3>
+    <p>See exactly what food you have and when it expires.</p>
   </div>
+
   <div class="feature">
-    <h3>Budget-Friendly Meals</h3>
-    <p>Get recipes using only available ingredients.</p>
+    <h3>Meals that fit your budget</h3>
+    <p>Discover recipes using only ingredients you already own.</p>
   </div>
+
   <div class="feature">
-    <h3>Earn Real Rewards</h3>
-    <p>Redeem credits at campus canteens and cafés.</p>
+    <h3>Turn good habits into rewards</h3>
+    <p>Earn credits redeemable at campus canteens and cafés.</p>
   </div>
 </div>
 
 <!-- TEAM -->
 <div class="team">
   <h2>Team</h2>
+  <p>A student-led team passionate about sustainability and affordability.</p>
+
   <div class="team-grid">
     <div class="member"><strong>Jessica Ordoñez</strong>Co-Founder</div>
     <div class="member"><strong>Kasia Poplawska</strong>Co-Founder</div>
@@ -223,7 +251,3 @@ footer {
 
 </body>
 </html>
-
-
-
-
