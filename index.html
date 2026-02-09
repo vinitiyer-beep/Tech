@@ -34,13 +34,13 @@ body {
 }
 
 .nav img {
-  height: 140px; /* BIG, FIXED LOGO */
+  height: 140px;
 }
 
 /* HERO */
 .hero {
   display: grid;
-  grid-template-columns: 1.1fr 0.9fr;
+  grid-template-columns: 1fr 1.2fr;
   gap: 40px;
   align-items: center;
   padding: 40px 60px 20px;
@@ -65,8 +65,10 @@ body {
 
 .hero small {
   display: block;
-  margin-top: 12px;
-  color: #64748b;
+  margin-top: 14px;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--green-dark);
 }
 
 /* CTA */
@@ -81,10 +83,20 @@ body {
   cursor: pointer;
 }
 
+/* STORE BADGE */
+.store-badge {
+  margin-top: 14px;
+}
+
+.store-badge img {
+  height: 36px;
+  width: auto;
+}
+
 /* APP IMAGE */
 .hero-image img {
   width: 100%;
-  max-width: 720px;
+  max-width: 780px;
 }
 
 /* FEATURES */
@@ -92,7 +104,7 @@ body {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 28px;
-  padding: 20px 60px 30px; /* tighter spacing */
+  padding: 20px 60px 30px;
 }
 
 .feature {
@@ -100,7 +112,6 @@ body {
   border-radius: 18px;
   padding: 26px;
   box-shadow: 0 10px 30px rgba(0,0,0,0.06);
-  min-height: 150px;
 }
 
 .feature h3 {
@@ -118,15 +129,17 @@ body {
 /* TEAM */
 .team {
   padding: 40px 60px;
+  text-align: center; /* CENTERED */
 }
 
 .team h2 {
-  margin-bottom: 8px;
+  margin-bottom: 10px;
 }
 
-.team p {
-  color: #64748b;
-  margin-bottom: 26px;
+.team-subtitle {
+  color: var(--green-main); /* GREEN */
+  font-weight: 600;
+  margin-bottom: 30px;
 }
 
 .team-grid {
@@ -187,20 +200,6 @@ footer {
   }
 }
 </style>
-  .team {
-  text-align: center;
-}
-
-.team h2 {
-  margin-bottom: 10px;
-}
-
-.team-subtitle {
-  color: #2e7d32;
-  font-weight: 600;
-  margin-bottom: 30px;
-}
-
 </head>
 
 <body>
@@ -219,17 +218,17 @@ footer {
     </h1>
 
     <p>
-      Track your food. Beat waste.  
+      Track your food. Beat waste.
       Earn real rewards on campus.
     </p>
 
     <button class="cta">Get Early Access</button>
 
-<div class="store-badge">
-  <img src="assets/store.png" alt="Download on the App Store">
-</div>
+    <div class="store-badge">
+      <img src="assets/store.png" alt="Download on the App Store">
+    </div>
 
-<small>Built by students, for students.</small>
+    <small>Built by students, for students.</small>
   </div>
 
   <div class="hero-image">
@@ -258,9 +257,9 @@ footer {
 <!-- TEAM -->
 <div class="team">
   <h2>Team</h2>
- <p class="team-subtitle">
-  A student-led team passionate about sustainability and affordability.
-</p>
+  <p class="team-subtitle">
+    A student-led team passionate about sustainability and affordability.
+  </p>
 
   <div class="team-grid">
     <div class="member"><strong>Jessica Ordoñez</strong>Co-Founder</div>
@@ -277,5 +276,3 @@ footer {
 
 </body>
 </html>
-
-
