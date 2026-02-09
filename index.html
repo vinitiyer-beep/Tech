@@ -1,145 +1,227 @@
-<style>
-:root {
-  --primary: #0f766e;
-  --secondary: #22c55e;
-  --dark: #064e3b;
-  --light: #f0fdfa;
-}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SaveTheBite | Eat Smart. Waste Less.</title>
 
-* {
-  box-sizing: border-box;
-}
+  <style>
+    :root {
+      --primary: #0f766e;
+      --secondary: #22c55e;
+      --dark: #064e3b;
+      --light: #f0fdfa;
+    }
 
-body {
-  margin: 0;
-  font-family: "Inter", Arial, sans-serif;
-  background: #ffffff;
-  color: #0f172a;
-  overflow-x: hidden;
-}
+    * {
+      box-sizing: border-box;
+    }
 
-/* HERO */
-.hero {
-  min-height: 100vh;
-  background: linear-gradient(135deg, #0f766e, #22c55e);
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  padding: 40px 20px;
-  position: relative;
-}
+    body {
+      margin: 0;
+      font-family: "Inter", Arial, sans-serif;
+      background: #ffffff;
+      color: #0f172a;
+      overflow-x: hidden;
+    }
 
-.hero-content {
-  max-width: 900px;
-}
+    /* HERO */
+    .hero {
+      min-height: 100vh;
+      background: linear-gradient(135deg, #0f766e, #22c55e);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 40px 20px;
+      position: relative;
+    }
 
-.hero img {
-  width: 120px;
-  margin-bottom: 20px;
-}
+    .hero-content {
+      max-width: 900px;
+    }
 
-.hero h1 {
-  font-size: 56px;
-  margin: 10px 0;
-}
+    .hero img {
+      width: 120px;
+      margin-bottom: 20px;
+    }
 
-.hero p {
-  font-size: 22px;
-  opacity: 0.95;
-}
+    .hero h1 {
+      font-size: 56px;
+      margin: 10px 0;
+    }
 
-/* FLOATING SHAPE */
-.hero::after {
-  content: "";
-  position: absolute;
-  bottom: -150px;
-  left: -100px;
-  width: 400px;
-  height: 400px;
-  background: rgba(255,255,255,0.12);
-  border-radius: 50%;
-}
+    .hero p {
+      font-size: 22px;
+      opacity: 0.95;
+    }
 
-/* SECTIONS */
-section {
-  max-width: 1200px;
-  margin: auto;
-  padding: 120px 20px;
-}
+    /* FLOATING SHAPE */
+    .hero::after {
+      content: "";
+      position: absolute;
+      bottom: -150px;
+      left: -100px;
+      width: 400px;
+      height: 400px;
+      background: rgba(255,255,255,0.12);
+      border-radius: 50%;
+    }
 
-.section-title {
-  font-size: 40px;
-  margin-bottom: 20px;
-  color: var(--dark);
-}
+    /* SECTIONS */
+    section {
+      max-width: 1200px;
+      margin: auto;
+      padding: 120px 20px;
+    }
 
-.section-text {
-  font-size: 18px;
-  max-width: 650px;
-  color: #475569;
-}
+    .section-title {
+      font-size: 40px;
+      margin-bottom: 20px;
+      color: var(--dark);
+    }
 
-/* SPLIT LAYOUT */
-.split {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 60px;
-  align-items: center;
-}
+    .section-text {
+      font-size: 18px;
+      max-width: 650px;
+      color: #475569;
+    }
 
-.split img {
-  width: 100%;
-  max-width: 320px;
-  border-radius: 32px;
-  box-shadow: 0 40px 80px rgba(0,0,0,0.25);
-}
+    /* SPLIT LAYOUT */
+    .split {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 60px;
+      align-items: center;
+    }
 
-/* SCROLL ANIMATION */
-.reveal {
-  opacity: 0;
-  transform: translateY(60px);
-  transition: all 0.8s ease;
-}
+    /* SCROLL ANIMATION */
+    .reveal {
+      opacity: 0;
+      transform: translateY(60px);
+      transition: all 0.8s ease;
+    }
 
-.reveal.active {
-  opacity: 1;
-  transform: translateY(0);
-}
+    .reveal.active {
+      opacity: 1;
+      transform: translateY(0);
+    }
 
-/* CTA */
-.cta {
-  background: linear-gradient(135deg, #22c55e, #0f766e);
-  color: white;
-  text-align: center;
-  padding: 120px 20px;
-}
+    /* CTA */
+    .cta {
+      background: linear-gradient(135deg, #22c55e, #0f766e);
+      color: white;
+      text-align: center;
+      padding: 120px 20px;
+    }
 
-.cta h2 {
-  font-size: 42px;
-}
+    .cta h2 {
+      font-size: 42px;
+    }
 
-.cta p {
-  font-size: 20px;
-  margin: 20px 0 40px;
-}
+    .cta p {
+      font-size: 20px;
+      margin: 20px 0 40px;
+    }
 
-.cta button {
-  background: white;
-  color: var(--dark);
-  border: none;
-  padding: 18px 42px;
-  border-radius: 999px;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-}
+    .cta button {
+      background: white;
+      color: var(--dark);
+      border: none;
+      padding: 18px 42px;
+      border-radius: 999px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+    }
 
-/* FOOTER */
-footer {
-  text-align: center;
-  padding: 30px;
-  color: #64748b;
-}
-</style>
+    /* FOOTER */
+    footer {
+      text-align: center;
+      padding: 30px;
+      color: #64748b;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-content reveal">
+      <img src="assets/logo.png" alt="SaveTheBite Logo">
+      <h1>Good food deserves better.</h1>
+      <p>
+        SaveTheBite helps students track food, stay within budget,
+        and earn rewards for reducing waste.
+      </p>
+    </div>
+  </div>
+
+  <!-- STORY SECTION -->
+  <section class="reveal">
+    <div class="split">
+      <div>
+        <h2 class="section-title">Food waste starts at home</h2>
+        <p class="section-text">
+          Students buy food with good intentions and end up throwing
+          it away because expiry dates are forgotten.
+        </p>
+      </div>
+      <!-- Image goes here later -->
+    </div>
+  </section>
+
+  <section class="reveal">
+    <div class="split">
+      <!-- Image goes here later -->
+      <div>
+        <h2 class="section-title">We make food visible again</h2>
+        <p class="section-text">
+          SaveTheBite tracks what you already own, reminds you before
+          food expires, and suggests meals using existing ingredients.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="reveal">
+    <div class="split">
+      <div>
+        <h2 class="section-title">Good habits should feel rewarding</h2>
+        <p class="section-text">
+          Earn credits by saving food and staying within budget,
+          then redeem them on campus.
+        </p>
+      </div>
+      <!-- Image goes here later -->
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <div class="cta reveal">
+    <h2>Eat smarter. Waste less.</h2>
+    <p>Sustainability that actually fits student life.</p>
+    <button>Join the Waitlist</button>
+  </div>
+
+  <footer>
+    © 2026 SaveTheBite · Built for students · Sustainability first
+  </footer>
+
+  <!-- SCROLL SCRIPT -->
+  <script>
+    const reveals = document.querySelectorAll(".reveal");
+
+    window.addEventListener("scroll", () => {
+      const trigger = window.innerHeight * 0.85;
+      reveals.forEach(el => {
+        const top = el.getBoundingClientRect().top;
+        if (top < trigger) el.classList.add("active");
+      });
+    });
+  </script>
+
+</body>
+</html>
