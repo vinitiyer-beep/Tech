@@ -1,227 +1,226 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>SaveTheBite | Eat Smart. Waste Less.</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SaveTheBite</title>
 
-  <style>
-    :root {
-      --primary: #0f766e;
-      --secondary: #22c55e;
-      --dark: #064e3b;
-      --light: #f0fdfa;
-    }
+<style>
+:root {
+  --green-dark: #0f766e;
+  --green-light: #22c55e;
+  --text-dark: #0f172a;
+  --bg-light: #f7fdfb;
+}
 
-    * {
-      box-sizing: border-box;
-    }
+* {
+  box-sizing: border-box;
+}
 
-    body {
-      margin: 0;
-      font-family: "Inter", Arial, sans-serif;
-      background: #ffffff;
-      color: #0f172a;
-      overflow-x: hidden;
-    }
+body {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  background: var(--bg-light);
+  color: var(--text-dark);
+}
 
-    /* HERO */
-    .hero {
-      min-height: 100vh;
-      background: linear-gradient(135deg, #0f766e, #22c55e);
-      color: white;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      padding: 40px 20px;
-      position: relative;
-    }
+/* NAVBAR */
+.nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 60px;
+}
 
-    .hero-content {
-      max-width: 900px;
-    }
+.nav img {
+  height: 60px; /* BIGGER LOGO */
+}
 
-    .hero img {
-      width: 120px;
-      margin-bottom: 20px;
-    }
+.nav button {
+  background: var(--green-dark);
+  color: white;
+  border: none;
+  padding: 12px 26px;
+  border-radius: 999px;
+  cursor: pointer;
+  font-weight: 600;
+}
 
-    .hero h1 {
-      font-size: 56px;
-      margin: 10px 0;
-    }
+/* HERO */
+.hero {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  align-items: center;
+  padding: 60px;
+  gap: 40px;
+}
 
-    .hero p {
-      font-size: 22px;
-      opacity: 0.95;
-    }
+.hero h1 {
+  font-size: 44px;
+  margin-bottom: 16px;
+}
 
-    /* FLOATING SHAPE */
-    .hero::after {
-      content: "";
-      position: absolute;
-      bottom: -150px;
-      left: -100px;
-      width: 400px;
-      height: 400px;
-      background: rgba(255,255,255,0.12);
-      border-radius: 50%;
-    }
+.hero p {
+  font-size: 18px;
+  margin-bottom: 28px;
+  color: #475569;
+}
 
-    /* SECTIONS */
-    section {
-      max-width: 1200px;
-      margin: auto;
-      padding: 120px 20px;
-    }
+.hero button {
+  background: var(--green-light);
+  border: none;
+  padding: 14px 32px;
+  border-radius: 999px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  color: #064e3b;
+}
 
-    .section-title {
-      font-size: 40px;
-      margin-bottom: 20px;
-      color: var(--dark);
-    }
+/* IMAGE RIGHT */
+.hero-image img {
+  width: 100%;
+  max-width: 420px;
+}
 
-    .section-text {
-      font-size: 18px;
-      max-width: 650px;
-      color: #475569;
-    }
+/* FEATURES */
+.features {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 30px;
+  padding: 40px 60px;
+}
 
-    /* SPLIT LAYOUT */
-    .split {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 60px;
-      align-items: center;
-    }
+.feature {
+  background: white;
+  padding: 24px;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+}
 
-    /* SCROLL ANIMATION */
-    .reveal {
-      opacity: 0;
-      transform: translateY(60px);
-      transition: all 0.8s ease;
-    }
+.feature h3 {
+  margin-top: 0;
+  color: var(--green-dark);
+}
 
-    .reveal.active {
-      opacity: 1;
-      transform: translateY(0);
-    }
+/* TEAM */
+.team {
+  padding: 40px 60px 60px;
+}
 
-    /* CTA */
-    .cta {
-      background: linear-gradient(135deg, #22c55e, #0f766e);
-      color: white;
-      text-align: center;
-      padding: 120px 20px;
-    }
+.team h2 {
+  margin-bottom: 20px;
+}
 
-    .cta h2 {
-      font-size: 42px;
-    }
+.team-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
 
-    .cta p {
-      font-size: 20px;
-      margin: 20px 0 40px;
-    }
+.member {
+  background: white;
+  padding: 18px;
+  border-radius: 14px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.05);
+}
 
-    .cta button {
-      background: white;
-      color: var(--dark);
-      border: none;
-      padding: 18px 42px;
-      border-radius: 999px;
-      font-size: 16px;
-      font-weight: 600;
-      cursor: pointer;
-    }
+.member strong {
+  display: block;
+}
 
-    /* FOOTER */
-    footer {
-      text-align: center;
-      padding: 30px;
-      color: #64748b;
-    }
-  </style>
+footer {
+  text-align: center;
+  padding: 20px;
+  color: #64748b;
+  font-size: 14px;
+}
+
+/* MOBILE */
+@media (max-width: 900px) {
+  .hero {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+
+  .hero-image {
+    order: -1;
+  }
+
+  .features,
+  .team-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .nav {
+    padding: 20px;
+  }
+
+  .hero,
+  .features,
+  .team {
+    padding: 30px 20px;
+  }
+}
+</style>
 </head>
 
 <body>
 
-  <!-- HERO -->
-  <div class="hero">
-    <div class="hero-content reveal">
-      <img src="assets/logo.png" alt="SaveTheBite Logo">
-      <h1>Good food deserves better.</h1>
-      <p>
-        SaveTheBite helps students track food, stay within budget,
-        and earn rewards for reducing waste.
-      </p>
-    </div>
-  </div>
+<!-- NAV -->
+<div class="nav">
+  <img src="assets/logo.png" alt="SaveTheBite Logo">
+  <button>Coming Soon</button>
+</div>
 
-  <!-- STORY SECTION -->
-  <section class="reveal">
-    <div class="split">
-      <div>
-        <h2 class="section-title">Food waste starts at home</h2>
-        <p class="section-text">
-          Students buy food with good intentions and end up throwing
-          it away because expiry dates are forgotten.
-        </p>
-      </div>
-      <!-- Image goes here later -->
-    </div>
-  </section>
-
-  <section class="reveal">
-    <div class="split">
-      <!-- Image goes here later -->
-      <div>
-        <h2 class="section-title">We make food visible again</h2>
-        <p class="section-text">
-          SaveTheBite tracks what you already own, reminds you before
-          food expires, and suggests meals using existing ingredients.
-        </p>
-      </div>
-    </div>
-  </section>
-
-  <section class="reveal">
-    <div class="split">
-      <div>
-        <h2 class="section-title">Good habits should feel rewarding</h2>
-        <p class="section-text">
-          Earn credits by saving food and staying within budget,
-          then redeem them on campus.
-        </p>
-      </div>
-      <!-- Image goes here later -->
-    </div>
-  </section>
-
-  <!-- CTA -->
-  <div class="cta reveal">
-    <h2>Eat smarter. Waste less.</h2>
-    <p>Sustainability that actually fits student life.</p>
+<!-- HERO -->
+<div class="hero">
+  <div>
+    <h1>Eat smart. Waste less.</h1>
+    <p>
+      SaveTheBite is a student-first app that helps you track food,
+      stay within budget, and get rewarded for reducing food waste.
+    </p>
     <button>Join the Waitlist</button>
   </div>
 
-  <footer>
-    © 2026 SaveTheBite · Built for students · Sustainability first
-  </footer>
+  <!-- IMAGE ON RIGHT (replace later) -->
+  <div class="hero-image">
+    <img src="assets/app.png" alt="App Preview">
+  </div>
+</div>
 
-  <!-- SCROLL SCRIPT -->
-  <script>
-    const reveals = document.querySelectorAll(".reveal");
+<!-- FEATURES -->
+<div class="features">
+  <div class="feature">
+    <h3>Track What You Own</h3>
+    <p>Know exactly what food you have and when it expires.</p>
+  </div>
+  <div class="feature">
+    <h3>Budget-Friendly Meals</h3>
+    <p>Get recipes using only available ingredients.</p>
+  </div>
+  <div class="feature">
+    <h3>Earn Real Rewards</h3>
+    <p>Redeem credits at campus canteens and cafés.</p>
+  </div>
+</div>
 
-    window.addEventListener("scroll", () => {
-      const trigger = window.innerHeight * 0.85;
-      reveals.forEach(el => {
-        const top = el.getBoundingClientRect().top;
-        if (top < trigger) el.classList.add("active");
-      });
-    });
-  </script>
+<!-- TEAM -->
+<div class="team">
+  <h2>Team</h2>
+  <div class="team-grid">
+    <div class="member"><strong>Jessica Ordoñez</strong>Co-Founder</div>
+    <div class="member"><strong>Kasia Poplawska</strong>Co-Founder</div>
+    <div class="member"><strong>Reiner D Silva</strong>Co-Founder</div>
+    <div class="member"><strong>Sai Ganapathiram</strong>Co-Founder</div>
+    <div class="member"><strong>Vinit Iyer</strong>Co-Founder</div>
+  </div>
+</div>
+
+<footer>
+  © 2026 SaveTheBite · Built for students
+</footer>
 
 </body>
 </html>
