@@ -1,10 +1,3 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SaveTheBite | Eat Smart. Waste Less.</title>
-
 <style>
 :root {
   --primary: #0f766e;
@@ -20,94 +13,99 @@
 body {
   margin: 0;
   font-family: "Inter", Arial, sans-serif;
-  background: linear-gradient(180deg, #ecfeff, #f7fdfb);
-  color: #1f2933;
+  background: #ffffff;
+  color: #0f172a;
+  overflow-x: hidden;
 }
 
 /* HERO */
 .hero {
+  min-height: 100vh;
   background: linear-gradient(135deg, #0f766e, #22c55e);
   color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   text-align: center;
-  padding: 90px 20px 110px;
+  padding: 40px 20px;
+  position: relative;
+}
+
+.hero-content {
+  max-width: 900px;
 }
 
 .hero img {
-  width: 110px;
+  width: 120px;
   margin-bottom: 20px;
 }
 
 .hero h1 {
-  font-size: 48px;
+  font-size: 56px;
   margin: 10px 0;
 }
 
 .hero p {
-  font-size: 20px;
-  max-width: 650px;
-  margin: 0 auto;
+  font-size: 22px;
   opacity: 0.95;
 }
 
-/* SECTION */
+/* FLOATING SHAPE */
+.hero::after {
+  content: "";
+  position: absolute;
+  bottom: -150px;
+  left: -100px;
+  width: 400px;
+  height: 400px;
+  background: rgba(255,255,255,0.12);
+  border-radius: 50%;
+}
+
+/* SECTIONS */
 section {
-  max-width: 1100px;
+  max-width: 1200px;
   margin: auto;
-  padding: 80px 20px;
+  padding: 120px 20px;
 }
 
 .section-title {
-  text-align: center;
-  font-size: 32px;
+  font-size: 40px;
+  margin-bottom: 20px;
   color: var(--dark);
-  margin-bottom: 15px;
 }
 
-.section-subtitle {
-  text-align: center;
-  max-width: 700px;
-  margin: 0 auto 50px;
-  color: #475569;
+.section-text {
   font-size: 18px;
+  max-width: 650px;
+  color: #475569;
 }
 
-/* GRID */
-.grid {
+/* SPLIT LAYOUT */
+.split {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 30px;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  align-items: center;
 }
 
-.card {
-  background: white;
-  border-radius: 18px;
-  padding: 30px;
-  box-shadow: 0 20px 40px rgba(0,0,0,0.06);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+.split img {
+  width: 100%;
+  max-width: 320px;
+  border-radius: 32px;
+  box-shadow: 0 40px 80px rgba(0,0,0,0.25);
 }
 
-.card:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 30px 60px rgba(0,0,0,0.12);
+/* SCROLL ANIMATION */
+.reveal {
+  opacity: 0;
+  transform: translateY(60px);
+  transition: all 0.8s ease;
 }
 
-.card h3 {
-  margin-top: 0;
-  color: var(--primary);
-}
-
-/* HOW IT WORKS */
-.steps {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 25px;
-}
-
-.step {
-  background: var(--light);
-  border-radius: 16px;
-  padding: 25px;
-  border-left: 6px solid var(--secondary);
+.reveal.active {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 /* CTA */
@@ -115,32 +113,27 @@ section {
   background: linear-gradient(135deg, #22c55e, #0f766e);
   color: white;
   text-align: center;
-  padding: 90px 20px;
+  padding: 120px 20px;
 }
 
 .cta h2 {
-  font-size: 36px;
-  margin-bottom: 10px;
+  font-size: 42px;
 }
 
 .cta p {
-  font-size: 18px;
-  margin-bottom: 30px;
+  font-size: 20px;
+  margin: 20px 0 40px;
 }
 
 .cta button {
   background: white;
   color: var(--dark);
   border: none;
-  padding: 16px 36px;
-  font-size: 16px;
+  padding: 18px 42px;
   border-radius: 999px;
-  cursor: pointer;
+  font-size: 16px;
   font-weight: 600;
-}
-
-.cta button:hover {
-  background: #ecfeff;
+  cursor: pointer;
 }
 
 /* FOOTER */
@@ -148,113 +141,5 @@ footer {
   text-align: center;
   padding: 30px;
   color: #64748b;
-  font-size: 14px;
 }
 </style>
-</head>
-
-<body>
-
-<!-- HERO -->
-<div class="hero">
-  <img src="assets/logo.png" alt="SaveTheBite Logo">
-  <h1>SaveTheBite</h1>
-  <p>
-    A smart food and budgeting app for students that helps you eat better,
-    spend less, reduce food waste, and earn real rewards.
-  </p>
-</div>
-
-<!-- PROBLEM -->
-<section>
-  <h2 class="section-title">The Problem</h2>
-  <p class="section-subtitle">
-    Students overspend on groceries while throwing away food.
-    Sustainability feels important, but unrewarded.
-  </p>
-
-  <div class="grid">
-    <div class="card">
-      <h3>Food Waste</h3>
-      <p>Groceries expire unnoticed and end up in the bin.</p>
-    </div>
-    <div class="card">
-      <h3>Budget Stress</h3>
-      <p>Monthly food expenses are hard to track and control.</p>
-    </div>
-    <div class="card">
-      <h3>No Incentives</h3>
-      <p>Doing the right thing doesn’t feel rewarding.</p>
-    </div>
-  </div>
-</section>
-
-<!-- SOLUTION -->
-<section>
-  <h2 class="section-title">Our Solution</h2>
-  <p class="section-subtitle">
-    SaveTheBite turns smart food behavior into savings and rewards.
-  </p>
-
-  <div class="grid">
-    <div class="card">
-      <h3>Smart Inventory</h3>
-      <p>Track what you own and get notified before food expires.</p>
-    </div>
-    <div class="card">
-      <h3>Budget-Based Meals</h3>
-      <p>Generate meals and recipes using only available ingredients.</p>
-    </div>
-    <div class="card">
-      <h3>Gamified Rewards</h3>
-      <p>Earn credits for saving food and staying within budget.</p>
-    </div>
-  </div>
-</section>
-
-<!-- HOW IT WORKS -->
-<section>
-  <h2 class="section-title">How It Works</h2>
-
-  <div class="steps">
-    <div class="step">Set preferences, budget, and goals</div>
-    <div class="step">Track groceries and expiry dates</div>
-    <div class="step">Get recipes and meal plans</div>
-    <div class="step">Complete challenges</div>
-    <div class="step">Earn and redeem credits on campus</div>
-  </div>
-</section>
-
-<!-- BUSINESS MODEL -->
-<section>
-  <h2 class="section-title">Business Model</h2>
-
-  <div class="grid">
-    <div class="card">
-      <h3>Universities</h3>
-      <p>Pay for student wellbeing, ESG impact, and food waste reduction.</p>
-    </div>
-    <div class="card">
-      <h3>Retail & Cafés</h3>
-      <p>Gain footfall and incremental revenue through redemptions.</p>
-    </div>
-    <div class="card">
-      <h3>Sponsors</h3>
-      <p>Brands sponsor challenges aligned with sustainability.</p>
-    </div>
-  </div>
-</section>
-
-<!-- CTA -->
-<div class="cta">
-  <h2>Coming Soon</h2>
-  <p>Eat smarter. Spend less. Get rewarded.</p>
-  <button>Join the Waitlist</button>
-</div>
-
-<footer>
-  © 2026 SaveTheBite · Designed for Students · Sustainability First
-</footer>
-
-</body>
-</html>
