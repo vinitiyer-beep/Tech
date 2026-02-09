@@ -11,6 +11,7 @@
   --green-main: #2e7d32;
   --green-light: #43a047;
   --text-dark: #0f172a;
+  --text-muted: #475569;
   --bg: #f6fbf8;
 }
 
@@ -33,7 +34,7 @@ body {
 }
 
 .nav img {
-  height: 110px;
+  height: 140px; /* BIG, FIXED LOGO */
 }
 
 /* HERO */
@@ -42,13 +43,13 @@ body {
   grid-template-columns: 1.1fr 0.9fr;
   gap: 40px;
   align-items: center;
-  padding: 60px;
+  padding: 40px 60px 20px;
 }
 
 .hero h1 {
   font-size: 48px;
   line-height: 1.15;
-  margin-bottom: 20px;
+  margin-bottom: 18px;
 }
 
 .hero h1 span {
@@ -57,14 +58,14 @@ body {
 
 .hero p {
   font-size: 18px;
-  color: #475569;
-  margin-bottom: 26px;
+  color: var(--text-muted);
+  margin-bottom: 24px;
   max-width: 520px;
 }
 
 .hero small {
   display: block;
-  margin-top: 14px;
+  margin-top: 12px;
   color: #64748b;
 }
 
@@ -91,7 +92,7 @@ body {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 28px;
-  padding: 40px 60px 20px;
+  padding: 20px 60px 30px; /* tighter spacing */
 }
 
 .feature {
@@ -99,31 +100,33 @@ body {
   border-radius: 18px;
   padding: 26px;
   box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+  min-height: 150px;
 }
 
 .feature h3 {
-  margin-top: 0;
+  margin: 0 0 10px;
   color: var(--green-dark);
   font-size: 18px;
 }
 
 .feature p {
   font-size: 15px;
-  color: #475569;
+  color: var(--text-muted);
+  margin: 0;
 }
 
 /* TEAM */
 .team {
-  padding: 50px 60px;
+  padding: 40px 60px;
 }
 
 .team h2 {
-  margin-bottom: 10px;
+  margin-bottom: 8px;
 }
 
 .team p {
   color: #64748b;
-  margin-bottom: 30px;
+  margin-bottom: 26px;
 }
 
 .team-grid {
@@ -147,7 +150,7 @@ body {
 /* FOOTER */
 footer {
   text-align: center;
-  padding: 24px;
+  padding: 22px;
   color: #64748b;
   font-size: 14px;
 }
@@ -172,7 +175,11 @@ footer {
   .hero,
   .features,
   .team {
-    padding: 30px 20px;
+    padding: 24px 20px;
+  }
+
+  .nav img {
+    height: 110px;
   }
 
   .hero h1 {
@@ -208,7 +215,6 @@ footer {
   </div>
 
   <div class="hero-image">
-    <!-- Replace this image later -->
     <img src="assets/app.png" alt="SaveTheBite App Preview">
   </div>
 </div>
@@ -216,17 +222,17 @@ footer {
 <!-- FEATURES -->
 <div class="features">
   <div class="feature">
-    <h3>Never forget what’s in your fridge</h3>
+    <h3>🧊 Never forget what’s in your fridge</h3>
     <p>See exactly what food you have and when it expires.</p>
   </div>
 
   <div class="feature">
-    <h3>Meals that fit your budget</h3>
+    <h3>💸 Meals that fit your budget</h3>
     <p>Discover recipes using only ingredients you already own.</p>
   </div>
 
   <div class="feature">
-    <h3>Turn good habits into rewards</h3>
+    <h3>🎁 Turn good habits into rewards</h3>
     <p>Earn credits redeemable at campus canteens and cafés.</p>
   </div>
 </div>
