@@ -1,233 +1,155 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Promptology – PDF to Form-A Row</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-
-  <!-- Styles -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
-
-  <!-- LOCAL pdf.js -->
-  <script src="libs/pdf.js"></script>
-  <script>
-    pdfjsLib.GlobalWorkerOptions.workerSrc = "libs/pdf.worker.js";
-  </script>
-
-  <!-- LOCAL OCR -->
-  <script src="libs/tesseract.js"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>BiteBack — Reverse Food Delivery</title>
 
   <style>
+    :root {
+      --primary: #1f7a5a;
+      --secondary: #f4f9f7;
+      --accent: #ffb703;
+      --dark: #0f172a;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "Inter", system-ui, sans-serif;
+    }
+
     body {
-      font-family: 'Inter', sans-serif;
-      background: radial-gradient(circle at top, #0f172a, #020617 52%, #000);
-      color: #e5e7eb;
+      background: linear-gradient(135deg, var(--secondary), #ffffff);
+      color: var(--dark);
       min-height: 100vh;
-      padding: 40px 20px;
       display: flex;
+      align-items: center;
       justify-content: center;
     }
-    .card {
+
+    .container {
       max-width: 900px;
-      width: 100%;
-      background: rgba(15, 23, 42, 0.75);
-      padding: 40px;
-      border-radius: 16px;
-      backdrop-filter: blur(12px);
-    }
-    .upload-box {
-      border: 2px dashed rgba(255,255,255,0.3);
-      padding: 30px;
-      border-radius: 14px;
+      padding: 40px 24px;
       text-align: center;
-      cursor: pointer;
-      margin-bottom: 20px;
-      position: relative;
     }
-    #fileInput {
-      position: absolute;
-      width: 100%; height: 100%;
-      opacity: 0; cursor: pointer; left: 0; top: 0;
-    }
-    .file-item {
-      background: rgba(255,255,255,0.07);
-      padding: 20px;
-      border-radius: 12px;
-      margin-bottom: 15px;
-    }
-    .btn {
-      margin-top: 10px;
-      padding: 10px 18px;
-      border: none;
+
+    .badge {
+      display: inline-block;
+      background: rgba(31, 122, 90, 0.1);
+      color: var(--primary);
+      padding: 6px 14px;
       border-radius: 999px;
-      background: linear-gradient(135deg,#4f46e5,#06b6d4);
-      color: white;
-      cursor: pointer;
+      font-weight: 600;
+      margin-bottom: 16px;
       font-size: 14px;
     }
-    pre {
-      white-space: pre-wrap;
-      color: #e5e7eb;
-      background: rgba(0,0,0,0.35);
-      padding: 12px;
-      border-radius: 8px;
-      font-size: 12px;
-      overflow-x: auto;
+
+    h1 {
+      font-size: clamp(2.5rem, 5vw, 3.5rem);
+      font-weight: 800;
+      margin-bottom: 12px;
+    }
+
+    h1 span {
+      color: var(--primary);
+    }
+
+    .subtitle {
+      font-size: 1.15rem;
+      color: #475569;
+      max-width: 650px;
+      margin: 0 auto 36px;
+      line-height: 1.6;
+    }
+
+    .features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 20px;
+      margin-bottom: 40px;
+    }
+
+    .card {
+      background: white;
+      padding: 22px;
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+      text-align: left;
+    }
+
+    .card h3 {
+      font-size: 1.1rem;
+      margin-bottom: 8px;
+      color: var(--primary);
+    }
+
+    .card p {
+      font-size: 0.95rem;
+      color: #475569;
+      line-height: 1.5;
+    }
+
+    .cta {
+      margin-top: 20px;
+    }
+
+    .cta p {
+      margin-bottom: 12px;
+      font-weight: 500;
+    }
+
+    .email-box {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    input[type="email"] {
+      padding: 12px 14px;
+      border-radius: 10px;
+      border: 1px solid #cbd5e1;
+      min-width: 260px;
+      font-size: 15px;
+    }
+
+    button {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 12px 22px;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(31, 122, 90, 0.25);
+    }
+
+    footer {
+      margin-top: 50px;
+      font-size: 14px;
+      color: #64748b;
+    }
+
+    footer span {
+      color: var(--primary);
+      font-weight: 600;
     }
   </style>
 </head>
 
 <body>
-<div class="card">
-  <h1 style="text-align:center;">Promptology</h1>
-  <p style="text-align:center;color:#9ca3af;font-size:14px;margin-bottom:20px;">
-    Upload PDF → Auto Extract → Copy Full Form-A Row (Excel Ready)
-  </p>
+  <div class="container">
 
-  <label class="upload-box">
-    <strong>Click to upload PDF</strong><br><small>or drag + drop</small>
-    <input id="fileInput" type="file" accept="application/pdf">
-  </label>
+    <div class="badge">🚀 Coming Soon</div>
 
-  <div id="results"></div>
-</div>
-
-<script>
-document.getElementById("fileInput").addEventListener("change", handleFile);
-
-// MASTER FUNCTION
-async function handleFile(e) {
-  const file = e.target.files[0];
-  const results = document.getElementById("results");
-  results.innerHTML = "";
-
-  const box = document.createElement("div");
-  box.className = "file-item";
-  box.innerHTML = `<strong>${file.name}</strong><br>Status: <span>Extracting…</span>`;
-  results.appendChild(box);
-
-  try {
-    const text = await extractHybrid(file, (p)=>{ box.querySelector("span").textContent=p; });
-    const data = extractFields(text);
-    const formARow = buildFormARow(data);
-
-    box.innerHTML = `
-      <strong>${file.name}</strong><br>Status: Done
-      <div style="margin-top:15px;">
-        <strong>Form-A Excel Row (Preview)</strong>
-        <pre>${formARow}</pre>
-        <button class="btn" onclick='copyRow(\`${formARow}\`)'>Copy Full Form-A Row</button>
-      </div>
-    `;
-  }
-  catch(err) {
-    box.innerHTML = `<strong>${file.name}</strong><br><span style="color:#f87171">Error extracting PDF.</span>`;
-  }
-}
-
-function copyRow(text) {
-  navigator.clipboard.writeText(text).then(() => {
-    alert("Form-A row copied!\nNow paste directly into Excel.");
-  });
-}
-
-// HYBRID: pdf.js → OCR fallback
-async function extractHybrid(file, update) {
-  const buffer = await file.arrayBuffer();
-  let text = "";
-
-  try {
-    update("Extracting (pdf.js) …");
-    text = await extractPdfText(buffer);
-  } catch {}
-
-  if (!text || text.replace(/\s+/g,"").length < 20) {
-    update("Extracting (OCR) …");
-    text = await extractOcrText(buffer);
-  }
-
-  return text;
-}
-
-async function extractPdfText(buffer) {
-  const pdf = await pdfjsLib.getDocument({data:buffer}).promise;
-  let t = "";
-  for(let i=1;i<=pdf.numPages;i++){
-    const page = await pdf.getPage(i);
-    const c = await page.getTextContent();
-    t += c.items.map(x=>x.str).join(" ") + "\n";
-  }
-  return t;
-}
-
-async function extractOcrText(buffer) {
-  const pdf = await pdfjsLib.getDocument({data:buffer}).promise;
-  let t = "";
-  for(let i=1;i<=pdf.numPages;i++){
-    const page = await pdf.getPage(i);
-    const v = page.getViewport({scale:1.7});
-    const canvas = document.createElement("canvas");
-    canvas.width=v.width; canvas.height=v.height;
-    const ctx=canvas.getContext("2d");
-    await page.render({canvasContext:ctx,viewport:v}).promise;
-    const out = await Tesseract.recognize(canvas,"eng");
-    t += out.data.text + "\n";
-  }
-  return t;
-}
-
-// FIELD EXTRACTION from text
-function extract(text, regex) {
-  const m = text.match(regex);
-  return m ? m[1].trim() : "";
-}
-
-function extractFields(text){
-  return {
-    Document_Number: extract(/(HTP\d+)/i),
-    Document_Date: (() => {
-      const r = extract(/Date\s*([\d]{2}-[A-Za-z]{3}-[\d]{2})/i);
-      if(!r) return "";
-      const m = {Jan:"01",Feb:"02",Mar:"03",Apr:"04",May:"05",Jun:"06",Jul:"07",Aug:"08",Sep:"09",Oct:"10",Nov:"11",Dec:"12"};
-      return r.replace(/(\d{2})-([A-Za-z]{3})-(\d{2})/, (x,d,mo,y)=>`${d}/${m[mo]}/20${y}`);
-    })(),
-    Buyer_GSTIN: extract(/\b(\d{2}[A-Z]{5}\d{4}[A-Z]\dZ[A-Z])\b/),
-    HSN: extract(/\b(998711)\b/),
-    GST_Rate: extract(/(\d{1,2})\s*%/),
-    Gross_Amount: extract(/Gross Amount.*?([\d,\.]+)/i),
-    Discount: extract(/Discount.*?([\d,\.]+)/i),
-    Taxable_Value: extract(/Taxable Value.*?([\d,\.]+)/i),
-    SGST: extract(/SGST.*?([\d,\.]+)/i),
-    CGST: extract(/CGST.*?([\d,\.]+)/i),
-    IGST: extract(/IGST.*?([\d,\.]+)/i),
-    Item_Total: extract(/Invoice Total.*?([\d,\.]+)/i),
-    Total_Taxable_Value: extract(/Total Taxable Value.*?([\d,\.]+)/i),
-    Total_Invoice_Value: extract(/Invoice Total.*?([\d,\.]+)/i)
-  };
-}
-
-// BUILD THE FULL 49-COLUMN TSV ROW
-function buildFormARow(v){
-  const row = [
-    "B2B","", "Tax Invoice",                             // 1–3
-    v.Document_Number, v.Document_Date,                 // 4–5
-    v.Buyer_GSTIN, "Hind Terminals Pvt Ltd", "",        // 6–8
-    "Gujarat", "Survey No. 76 / 77, Adani Port Road, Dhrab", "", // 9–11
-    "Kachchh", "370001", "Gujarat", "", "",             // 12–16
-    "1", "Repairs", "Yes", v.HSN, "0", "NUMBERS", "0",  // 17–23
-    v.Gross_Amount, v.Discount, v.Taxable_Value,        // 24–26
-    v.Taxable_Value, v.GST_Rate,                        // 27–28
-    v.SGST, v.CGST, v.IGST,                             // 29–31
-    "", "", "", "", "", "", "",                         // CESS FIELDS (blank)
-    v.Item_Total,                                       // item total
-    v.Total_Taxable_Value, v.SGST, v.CGST, v.IGST,      // totals
-    "", "", "",                                         // cess total blank
-    v.Total_Invoice_Value                               // final invoice
-  ];
-
-  return row.map(x=>x||"").join("\t");
-}
-</script>
-
-</body>
-</html>
+    <h1><span>BiteBack</span></h1>
+    <p class="subtitle">
+      Re
