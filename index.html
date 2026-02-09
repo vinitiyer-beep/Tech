@@ -1,188 +1,259 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>SaveTheBite | Eat Smart. Waste Less.</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SaveTheBite | Eat Smart. Waste Less.</title>
 
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, Helvetica, sans-serif;
-      background: #f7f9fb;
-      color: #1f2933;
-      line-height: 1.6;
-    }
+<style>
+:root {
+  --primary: #0f766e;
+  --secondary: #22c55e;
+  --dark: #064e3b;
+  --light: #f0fdfa;
+}
 
-    header {
-      background: #0f766e;
-      color: white;
-      padding: 60px 20px;
-      text-align: center;
-    }
+* {
+  box-sizing: border-box;
+}
 
-    header img {
-      width: 110px;
-      margin-bottom: 20px;
-    }
+body {
+  margin: 0;
+  font-family: "Inter", Arial, sans-serif;
+  background: linear-gradient(180deg, #ecfeff, #f7fdfb);
+  color: #1f2933;
+}
 
-    section {
-      max-width: 1000px;
-      margin: auto;
-      padding: 60px 20px;
-    }
+/* HERO */
+.hero {
+  background: linear-gradient(135deg, #0f766e, #22c55e);
+  color: white;
+  text-align: center;
+  padding: 90px 20px 110px;
+}
 
-    h2 {
-      color: #0f766e;
-      margin-bottom: 10px;
-    }
+.hero img {
+  width: 110px;
+  margin-bottom: 20px;
+}
 
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 20px;
-      margin-top: 30px;
-    }
+.hero h1 {
+  font-size: 48px;
+  margin: 10px 0;
+}
 
-    .card {
-      background: white;
-      padding: 25px;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-    }
+.hero p {
+  font-size: 20px;
+  max-width: 650px;
+  margin: 0 auto;
+  opacity: 0.95;
+}
 
-    .cta {
-      background: #ecfeff;
-      text-align: center;
-      padding: 60px 20px;
-    }
+/* SECTION */
+section {
+  max-width: 1100px;
+  margin: auto;
+  padding: 80px 20px;
+}
 
-    .cta button {
-      background: #0f766e;
-      color: white;
-      border: none;
-      padding: 15px 30px;
-      font-size: 16px;
-      border-radius: 8px;
-      cursor: pointer;
-    }
+.section-title {
+  text-align: center;
+  font-size: 32px;
+  color: var(--dark);
+  margin-bottom: 15px;
+}
 
-    footer {
-      text-align: center;
-      padding: 20px;
-      font-size: 14px;
-      color: #6b7280;
-    }
-  </style>
+.section-subtitle {
+  text-align: center;
+  max-width: 700px;
+  margin: 0 auto 50px;
+  color: #475569;
+  font-size: 18px;
+}
+
+/* GRID */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 30px;
+}
+
+.card {
+  background: white;
+  border-radius: 18px;
+  padding: 30px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.06);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 30px 60px rgba(0,0,0,0.12);
+}
+
+.card h3 {
+  margin-top: 0;
+  color: var(--primary);
+}
+
+/* HOW IT WORKS */
+.steps {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 25px;
+}
+
+.step {
+  background: var(--light);
+  border-radius: 16px;
+  padding: 25px;
+  border-left: 6px solid var(--secondary);
+}
+
+/* CTA */
+.cta {
+  background: linear-gradient(135deg, #22c55e, #0f766e);
+  color: white;
+  text-align: center;
+  padding: 90px 20px;
+}
+
+.cta h2 {
+  font-size: 36px;
+  margin-bottom: 10px;
+}
+
+.cta p {
+  font-size: 18px;
+  margin-bottom: 30px;
+}
+
+.cta button {
+  background: white;
+  color: var(--dark);
+  border: none;
+  padding: 16px 36px;
+  font-size: 16px;
+  border-radius: 999px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.cta button:hover {
+  background: #ecfeff;
+}
+
+/* FOOTER */
+footer {
+  text-align: center;
+  padding: 30px;
+  color: #64748b;
+  font-size: 14px;
+}
+</style>
 </head>
 
 <body>
 
-<!-- HERO SECTION -->
-<header>
-  <!-- LOGO GOES HERE -->
+<!-- HERO -->
+<div class="hero">
   <img src="assets/logo.png" alt="SaveTheBite Logo">
-
   <h1>SaveTheBite</h1>
-  <p>Track what you own. Eat within budget. Reduce food waste. Get rewarded.</p>
-</header>
+  <p>
+    A smart food and budgeting app for students that helps you eat better,
+    spend less, reduce food waste, and earn real rewards.
+  </p>
+</div>
 
 <!-- PROBLEM -->
 <section>
-  <h2>The Problem</h2>
-  <p>
-    Students overspend on food while throwing away perfectly edible groceries.
-    Expiry dates are forgotten, budgets are exceeded, and sustainability goals
-    feel abstract.
+  <h2 class="section-title">The Problem</h2>
+  <p class="section-subtitle">
+    Students overspend on groceries while throwing away food.
+    Sustainability feels important, but unrewarded.
   </p>
+
+  <div class="grid">
+    <div class="card">
+      <h3>Food Waste</h3>
+      <p>Groceries expire unnoticed and end up in the bin.</p>
+    </div>
+    <div class="card">
+      <h3>Budget Stress</h3>
+      <p>Monthly food expenses are hard to track and control.</p>
+    </div>
+    <div class="card">
+      <h3>No Incentives</h3>
+      <p>Doing the right thing doesn’t feel rewarding.</p>
+    </div>
+  </div>
 </section>
 
 <!-- SOLUTION -->
 <section>
-  <h2>Our Solution</h2>
-
-  <div class="grid">
-    <div class="card">
-      <h3>Smart Food Tracking</h3>
-      <p>
-        Track what food you already own using receipt scans or quick inputs.
-        Get reminders before items expire.
-      </p>
-    </div>
-
-    <div class="card">
-      <h3>Budget-Friendly Meal Planning</h3>
-      <p>
-        Generate meal plans and recipes using only existing ingredients
-        while staying within your budget.
-      </p>
-    </div>
-
-    <div class="card">
-      <h3>Gamified Sustainability</h3>
-      <p>
-        Join challenges, reduce waste, and earn credits for positive food behavior.
-      </p>
-    </div>
-  </div>
-</section>
-
-<!-- USER FLOW -->
-<section>
-  <h2>How It Works</h2>
-  <ol>
-    <li>Set food preferences, budget, and sustainability goals</li>
-    <li>Track food inventory and receive expiry alerts</li>
-    <li>Generate affordable meal plans and grocery lists</li>
-    <li>Complete challenges and earn credits</li>
-    <li>Redeem credits at campus canteens, grocery stores, and cafés</li>
-  </ol>
-
-  <!-- OPTIONAL FLOW IMAGE -->
-  <!-- <img src="assets/flow.png" style="width:100%; margin-top:30px;"> -->
-</section>
-
-<!-- MONETIZATION -->
-<section>
-  <h2>Business Model</h2>
-
-  <div class="grid">
-    <div class="card">
-      <h3>University Partnerships</h3>
-      <p>
-        Universities pay for student wellbeing, sustainability impact,
-        and ESG reporting.
-      </p>
-    </div>
-
-    <div class="card">
-      <h3>Retail & Café Partners</h3>
-      <p>
-        Grocery stores and cafés gain footfall through credit-based redemptions
-        and promotions.
-      </p>
-    </div>
-
-    <div class="card">
-      <h3>Sponsored Challenges</h3>
-      <p>
-        Brands sponsor challenges aligned with affordability and sustainability.
-      </p>
-    </div>
-  </div>
-</section>
-
-<!-- CALL TO ACTION -->
-<section class="cta">
-  <h2>Coming Soon</h2>
-  <p>
-    Save money. Reduce food waste. Make sustainability rewarding.
+  <h2 class="section-title">Our Solution</h2>
+  <p class="section-subtitle">
+    SaveTheBite turns smart food behavior into savings and rewards.
   </p>
-  <button>Join the Waitlist</button>
+
+  <div class="grid">
+    <div class="card">
+      <h3>Smart Inventory</h3>
+      <p>Track what you own and get notified before food expires.</p>
+    </div>
+    <div class="card">
+      <h3>Budget-Based Meals</h3>
+      <p>Generate meals and recipes using only available ingredients.</p>
+    </div>
+    <div class="card">
+      <h3>Gamified Rewards</h3>
+      <p>Earn credits for saving food and staying within budget.</p>
+    </div>
+  </div>
 </section>
+
+<!-- HOW IT WORKS -->
+<section>
+  <h2 class="section-title">How It Works</h2>
+
+  <div class="steps">
+    <div class="step">Set preferences, budget, and goals</div>
+    <div class="step">Track groceries and expiry dates</div>
+    <div class="step">Get recipes and meal plans</div>
+    <div class="step">Complete challenges</div>
+    <div class="step">Earn and redeem credits on campus</div>
+  </div>
+</section>
+
+<!-- BUSINESS MODEL -->
+<section>
+  <h2 class="section-title">Business Model</h2>
+
+  <div class="grid">
+    <div class="card">
+      <h3>Universities</h3>
+      <p>Pay for student wellbeing, ESG impact, and food waste reduction.</p>
+    </div>
+    <div class="card">
+      <h3>Retail & Cafés</h3>
+      <p>Gain footfall and incremental revenue through redemptions.</p>
+    </div>
+    <div class="card">
+      <h3>Sponsors</h3>
+      <p>Brands sponsor challenges aligned with sustainability.</p>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<div class="cta">
+  <h2>Coming Soon</h2>
+  <p>Eat smarter. Spend less. Get rewarded.</p>
+  <button>Join the Waitlist</button>
+</div>
 
 <footer>
-  © 2026 SaveTheBite · Built for Students · Sustainability First
+  © 2026 SaveTheBite · Designed for Students · Sustainability First
 </footer>
 
 </body>
