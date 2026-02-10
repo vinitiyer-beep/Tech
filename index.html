@@ -65,7 +65,7 @@ body {
 
 .hero small {
   display: block;
-  margin-top: 14px;
+  margin-top: 32px;
   font-size: 18px;
   font-weight: 700;
   color: var(--green-dark);
@@ -78,6 +78,18 @@ body {
   color: white;
   padding: 16px 36px;
   font-size: 16px;
+  border-radius: 999px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* DEMO BUTTON */
+.demo-btn {
+  margin-left: 12px;
+  background: transparent;
+  border: 2px solid var(--green-main);
+  color: var(--green-main);
+  padding: 14px 32px;
   border-radius: 999px;
   font-weight: 600;
   cursor: pointer;
@@ -126,10 +138,44 @@ body {
   margin: 0;
 }
 
+/* DEMO SECTION */
+.demo-section {
+  display: none;
+  text-align: center;
+  padding: 60px 20px;
+}
+
+.demo-section img {
+  max-width: 320px;
+  margin: 30px auto;
+  display: block;
+}
+
+.demo-controls {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.demo-controls button {
+  padding: 10px 18px;
+  border-radius: 20px;
+  border: 1px solid #cde5d1;
+  background: white;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.demo-caption {
+  font-size: 18px;
+  color: var(--text-muted);
+}
+
 /* TEAM */
 .team {
   padding: 40px 60px;
-  text-align: center; /* CENTERED */
+  text-align: center;
 }
 
 .team h2 {
@@ -137,7 +183,7 @@ body {
 }
 
 .team-subtitle {
-  color: var(--green-main); /* GREEN */
+  color: var(--green-main);
   font-weight: 600;
   margin-bottom: 30px;
 }
@@ -223,6 +269,7 @@ footer {
     </p>
 
     <button class="cta">Get Early Access</button>
+    <button class="demo-btn" onclick="openDemo()">View Demo</button>
 
     <div class="store-badge">
       <img src="assets/store.png" alt="Download on the App Store">
@@ -233,6 +280,23 @@ footer {
 
   <div class="hero-image">
     <img src="assets/app.png" alt="SaveTheBite App Preview">
+  </div>
+</div>
+
+<!-- DEMO -->
+<div id="demo" class="demo-section">
+  <h2>SaveTheBite App Demo</h2>
+  <p class="demo-caption" id="demoText">
+    Track what you already have in your pantry.
+  </p>
+
+  <img id="demoImage" src="assets/app-pantry.png" alt="App Demo">
+
+  <div class="demo-controls">
+    <button onclick="showDemo('pantry')">Pantry</button>
+    <button onclick="showDemo('recipes')">Recipes</button>
+    <button onclick="showDemo('rewards')">Rewards</button>
+    <button onclick="showDemo('impact')">Impact</button>
   </div>
 </div>
 
@@ -274,8 +338,34 @@ footer {
   © 2026 SaveTheBite · Built for students
 </footer>
 
+<script>
+function openDemo() {
+  document.getElementById("demo").style.display = "block";
+  document.getElementById("demo").scrollIntoView({ behavior: "smooth" });
+}
+
+function showDemo(step) {
+  const image = document.getElementById("demoImage");
+  const text = document.getElementById("demoText");
+
+  if (step === "pantry") {
+    image.src = "assets/app-pantry.png";
+    text.innerText = "Track what you already have in your pantry.";
+  }
+  if (step === "recipes") {
+    image.src = "assets/app-recipes.png";
+    text.innerText = "Get recipes using only ingredients you already own.";
+  }
+  if (step === "rewards") {
+    image.src = "assets/app-rewards.png";
+    text.innerText = "Earn credits for reducing food waste.";
+  }
+  if (step === "impact") {
+    image.src = "assets/app-impact.png";
+    text.innerText = "See the real impact of your food-saving habits.";
+  }
+}
+</script>
+
 </body>
 </html>
-
-
-
